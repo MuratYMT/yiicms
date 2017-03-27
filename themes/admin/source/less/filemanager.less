@@ -1,0 +1,37 @@
+.filemanager {
+  .row {
+    margin-bottom: 20px;
+  }
+  .icon-list {
+    float: left;
+    height: 170px;
+    width: 140px;
+    overflow: hidden;
+    box-shadow: 1px 1px 5px 0 #a2958a;
+    border: 1px solid #ddd;
+    text-align: center;
+    margin: 7px;
+    position: relative;
+    .manage-box {
+      .manage-box(none);
+    }
+    &:hover {
+      .manage-box {
+        .manage-box(block);
+      }
+    }
+  }
+  .image {
+    padding-top: 6px;
+  }
+}
+
+.manage-box(@display) {
+  height: 48px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 7px;
+  display: @display;
+}

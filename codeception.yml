@@ -1,0 +1,44 @@
+actor: Tester
+paths:
+    tests: tests
+    log: tests/_output
+    data: tests/_data
+    helpers: tests/_support
+settings:
+    bootstrap: _bootstrap.php
+    colors: true
+    memory_limit: 1024M
+modules:
+    config:
+        Db:
+            dsn: 'mysql:host=localhost;dbname=test_yiicms'
+            user: 'root'
+            password: 'root'
+            dump: 'tests/_data/clear-mysql.sql'
+            cleanup: false
+            reconnect: true
+        Yii2:
+            configFile: 'config/test.php'
+            cleanup: false
+
+coverage:
+    c3_url: http://test-admin.yiicms.ru
+    enabled: true
+    remote: false
+    local: true
+    show_uncovered: false
+    whitelist:
+            include:
+                - yiicms/admin/components/*.php
+                - yiicms/admin/config/*.php
+                - yiicms/admin/controllers/*.php
+                - yiicms/admin/menu/*.php
+                - yiicms/admin/models/*.php
+                - yiicms/admin/views/*.php
+                - yiicms/common/assets/*.php
+                - yiicms/common/components/*.php
+                - yiicms/common/controllers/*.php
+                - yiicms/common/models/*.php
+            exclude:
+                - yiicms/common/assets/fm/*
+                - yiicms/common/assets/resource/

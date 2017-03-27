@@ -1,0 +1,14 @@
+/composer.lock
+/.idea
+/c3.php
+/vendor
+/upload/*
+/runtime/*
+/public/assets/*
+/public/upload/*
+/tests/_support/_generated/*
+/tests/runtime/*
+/tests/_output/*
+/tests/public/assets/*
+/tests/public/upload/*
+/themes/admin/source/dist/css/*

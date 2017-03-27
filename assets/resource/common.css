@@ -1,0 +1,44 @@
+#ajax-loader {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -64px;
+    margin-left: -64px;
+    height: 240px;
+    width: 240px;
+    z-index: 1000000;
+    display: none;
+}
+
+#ajax-loader div {
+    z-index: 100;
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: #aaaaaa;
+    opacity: 0.3;
+}
+
+#ajax-loader i {
+    color: #000000;
+}
+
+body {
+    font-family: "Roboto", sans-serif;
+    font-size: 13px;
+}
+
+.button-row {
+    margin-bottom: 30px;
+}
+
+.dropdown-menu {
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.125);
+    -webkit-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.125);
+}
+
+.summary {
+    margin: 8px;
+}

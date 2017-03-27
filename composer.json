@@ -1,0 +1,52 @@
+{
+  "name": "MuratYMT/yiicms",
+  "description": "Yii 2 framework based cms",
+  "minimum-stability": "stable",
+  "license": "BSD-3-Clause",
+  "authors": [
+    {
+      "name": "Murat Yeskendirov",
+      "email": "murat.yeskendirov@yandex.ru"
+    }
+  ],
+  "require": {
+    "php": ">=5.6.0",
+    "yiisoft/yii2": ">=2.0.10",
+    "yiisoft/yii2-bootstrap": "*",
+    "yiisoft/yii2-swiftmailer": "*",
+    "yiisoft/yii2-jui": "~2.0.0",
+    "yiisoft/yii2-imagine": "~2.0.0",
+    "kartik-v/yii2-widgets": "*",
+    "kartik-v/yii2-grid": "dev-master",
+    "kartik-v/yii2-context-menu": "*",
+    "codemix/yii2-localeurls": "*",
+    "letyii/yii2-tinymce": "*",
+    "rmrevin/yii2-fontawesome": "~2.17",
+    "bower-asset/bootbox": "~4.3.0",
+    "bower-asset/fontawesome-iconpicker": "*",
+    "himiklab/yii2-colorbox-widget": "*",
+    "romka-chev/yii2-swiper": "*"
+  },
+  "require-dev": {
+    "yiisoft/yii2-debug": "*",
+    "yiisoft/yii2-gii": "*",
+    "yiisoft/yii2-faker": "*",
+    "codeception/codeception": "2.2.*",
+    "codeception/c3": "2.*",
+    "codeception/specify": "*",
+    "codeception/verify": "*",
+    "se/selenium-server-standalone": "*",
+    "yiisoft/yii2-coding-standards": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "yiicms\\": ""
+    }
+  },
+  "extra": {
+    "asset-installer-paths": {
+      "npm-asset-library": "vendor/npm",
+      "bower-asset-library": "vendor/bower"
+    }
+  }
+}

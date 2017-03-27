@@ -1,0 +1,11 @@
+Доступ к клиентам имеют обладатели TheirCustomerView -> CustomerView
+
+
+Доступ к продаже TheirSaleAccess -> SaleAccess
+Доступ к архиву TheirSaleArchiveManage -> SaleArchiveManage
+Доступ к аудиту TheirSaleAudit -> SaleAudit
+
+Доступ к контактным данным клиентов закрепленных за пользователем объектов продажи ContactsTheirView -> ContactsAllView
+Право на Добавление TheirSaleAdd -> SaleAdd
+Право на удаление TheirSaleDel -> SaleDel
+Право на Редактирование TheirSaleEdit -> SaleEdit

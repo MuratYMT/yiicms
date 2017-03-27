@@ -1,0 +1,110 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Admin
+ * Date: 24.05.2016
+ * Time: 8:39
+ */
+
+namespace common\unit\test\models\web;
+
+use Imagine\Image\ManipulatorInterface;
+use yiicms\models\core\LoadedFiles;
+use yiicms\models\core\Users;
+use yiicms\tests\_data\fixtures\models\core\LoadedFilesFixture;
+use tests\unit\UnitCest;
+
+/**
+ * Class LoadedFilesCest
+ * @package tests\unit\test\models\web
+ * @method LoadedFiles files($key)
+ */
+class LoadedFilesCest extends UnitCest
+{
+    public static function _cestFixtures()
+    {
+        return ['loadedFiles' => LoadedFilesFixture::className()];
+    }
+
+    public function testAssign(\MyUnitTester $I)
+    {
+        $upload = LoadedFilesFixture::getUpload();
+
+        $loaded = new LoadedFiles();
+        $loaded->assign2($upload, 220);
+        $I->assertTrue($loaded->save());
+
+        $I->assertEquals(0, $loaded->persistent);
+        $I->assertFileExists(\Yii::getAlias('@uploadFolder/' . $loaded->path));
+
+        $user = Users::findById(220);
+        $I->assertEquals($loaded->size, $user->uploadedFilesSize);
+
+        $loaded->delete();
+        $I->assertFileNotExists(\Yii::getAlias('@uploadFolder/' . $loaded->path));
+
+        $user = Users::findById(220);
+        $I->assertEquals(0, $user->uploadedFilesSize);
+    }
+
+    public function testFindByPath(\MyUnitTester $I)
+    {
+        $f2 = $this->_files('f2');
+
+        $file = LoadedFiles::findByPath($f2->path);
+        $I->assertNotNull($file);
+        $I->assertEquals($f2->id, $file->id);
+    }
+
+    public function testFindById(\MyUnitTester $I)
+    {
+        $f2 = $this->_files('f2');
+
+        $file = LoadedFiles::findById($f2->id);
+        $I->assertNotNull($file);
+        $I->assertEquals($f2->path, $file->path);
+    }
+
+    public function testPublishFile(\MyUnitTester $I)
+    {
+        $f2 = $this->_files('f2');
+        $path = pathinfo($f2->path, PATHINFO_DIRNAME) . '/';
+        $file = pathinfo($f2->path, PATHINFO_FILENAME) . '.' . pathinfo($f2->path, PATHINFO_EXTENSION);
+        $result = LoadedFiles::publishFile($path, $file);
+
+        $I->assertNotEquals(-1, $result);
+        $I->assertNotFalse($result);
+
+        $I->assertFileExists(\Yii::getAlias('@upload/' . $f2->path));
+
+        $f2->delete();
+        $I->assertFileNotExists(\Yii::getAlias('@upload/' . $f2->path));
+        $I->assertFileNotExists(\Yii::getAlias('@uploadFolder/' . $f2->path));
+    }
+
+    public function testPublishThumbNail(\MyUnitTester $I)
+    {
+        $f2 = $this->_files('f2');
+        $path = pathinfo($f2->path, PATHINFO_DIRNAME) . '/';
+        $file = pathinfo($f2->path, PATHINFO_FILENAME) . '.' . pathinfo($f2->path, PATHINFO_EXTENSION);
+        $result = LoadedFiles::publishThumbnail($path, $file, 100, 100, ManipulatorInterface::THUMBNAIL_INSET);
+
+        $I->assertNotEquals(-1, $result);
+        $I->assertNotFalse($result);
+
+        $I->assertFileExists(\Yii::getAlias('@upload/' . LoadedFiles::makeThumbnailPath($f2->path, 100, 100, ManipulatorInterface::THUMBNAIL_INSET)));
+
+        $f2->delete();
+        $I->assertFileNotExists(
+            \Yii::getAlias('@upload/' . LoadedFiles::makeThumbnailPath($f2->path, 100, 100, ManipulatorInterface::THUMBNAIL_INSET)));
+    }
+
+    /**
+     * @param string $id
+     * @return LoadedFiles
+     */
+    public function _files($id)
+    {
+        return $this->tester->grabFixture('loadedFiles', $id);
+    }
+}
