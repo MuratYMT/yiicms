@@ -1,5 +1,7 @@
 <?php
 
+namespace yiicms\migrations;
+
 use yii\db\Migration;
 use yii\log\DbTarget;
 use yii\rbac\DbManager;
@@ -56,7 +58,7 @@ class m170217_022743_init extends Migration
         echo '   > register permissions ...';
         $time = microtime(true);
         /** @var DbManager $auth */
-        $auth = Yii::$app->authManager;
+        $auth = \Yii::$app->authManager;
 
         $forAddItems = [
             'ProfileEditOwn' => ['Редактирование пользователем только своего профиля', ProfileOwnRule::className(), null],
@@ -110,7 +112,7 @@ class m170217_022743_init extends Migration
         echo '    > register rules ...';
         $time = microtime(true);
         /** @var DbManager $auth */
-        $auth = Yii::$app->authManager;
+        $auth = \Yii::$app->authManager;
         $fileOwnRule = new FileManagerOwnRule();
         $auth->add($fileOwnRule);
         $profileOwnRule = new ProfileOwnRule();
@@ -122,7 +124,7 @@ class m170217_022743_init extends Migration
     private function createDefaultRoles()
     {
         echo '    > create roles ...';
-        $auth = Yii::$app->authManager;
+        $auth = \Yii::$app->authManager;
         $time = microtime(true);
         $roles = [
             'Registered Users' => ['Зарегестрированный пользователь', 'FilesManageOwn', 'ProfileEditOwn'],
@@ -222,10 +224,10 @@ class m170217_022743_init extends Migration
     private function dropTables()
     {
         /** @var DbManager $auth */
-        $auth = Yii::$app->authManager;
+        $auth = \Yii::$app->authManager;
 
         /** @var DbTarget $target */
-        $target = Yii::$app->log->targets['db'];
+        $target = \Yii::$app->log->targets['db'];
 
         $this->dropTable(UserStat::tableName());
         $this->dropTable(Comment::tableName());
@@ -538,7 +540,7 @@ class m170217_022743_init extends Migration
     private function createTableMenusForRole($tableOptions)
     {
         /** @var DbManager $auth */
-        $auth = Yii::$app->authManager;
+        $auth = \Yii::$app->authManager;
 
         $columns = [
             'menuId' => $this->integer()->notNull(),
@@ -594,7 +596,7 @@ class m170217_022743_init extends Migration
     private function createTableBlocksForRole($tableOptions)
     {
         /** @var DbManager $auth */
-        $auth = Yii::$app->authManager;
+        $auth = \Yii::$app->authManager;
 
         $columns = [
             'blockId' => $this->integer()->notNull(),
@@ -666,7 +668,7 @@ class m170217_022743_init extends Migration
     private function createTableLog($tableOptions)
     {
         /** @var DbTarget $target */
-        $target = Yii::$app->log->targets['db'];
+        $target = \Yii::$app->log->targets['db'];
 
         $columns = [
             'id' => $this->bigPrimaryKey(),
@@ -784,7 +786,7 @@ class m170217_022743_init extends Migration
     private function createTableRbacAssignment($tableOptions)
     {
         /** @var DbManager $auth */
-        $auth = Yii::$app->authManager;
+        $auth = \Yii::$app->authManager;
 
         $columns = [
             'item_name' => $this->string(64)->notNull(),
@@ -801,7 +803,7 @@ class m170217_022743_init extends Migration
     private function createTableRbacRule($tableOptions)
     {
         /** @var DbManager $auth */
-        $auth = Yii::$app->authManager;
+        $auth = \Yii::$app->authManager;
 
         $columns = [
             'name' => $this->string(64)->notNull(),
@@ -818,7 +820,7 @@ class m170217_022743_init extends Migration
     private function createTableRbacItemChild($tableOptions)
     {
         /** @var DbManager $auth */
-        $auth = Yii::$app->authManager;
+        $auth = \Yii::$app->authManager;
 
         $columns = [
             'parent' => $this->string(64),
@@ -834,7 +836,7 @@ class m170217_022743_init extends Migration
     private function createTableRbacItem($tableOptions)
     {
         /** @var DbManager $auth */
-        $auth = Yii::$app->authManager;
+        $auth = \Yii::$app->authManager;
 
         $columns = [
             'name' => $this->string(64)->notNull(),

@@ -25,7 +25,10 @@ return [
     'controllerMap' => [
         'migrate' => [
             'class' => MigrateController::class,
-            'migrationPath' => '@yiicms/migrations',
+            'migrationPath' => null,
+            'migrationNamespaces' => [
+                'yiicms\migrations',
+            ],
         ],
     ],
     'timeZone' => 'UTC',
