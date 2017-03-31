@@ -12,6 +12,12 @@ use yii\helpers\Html;
 
 class GridView extends \kartik\grid\GridView
 {
+    public function __construct(array $config = [])
+    {
+        $this->export = false;
+        parent::__construct($config);
+    }
+
     public function run()
     {
         Html::addCssClass($this->options, 'box');
