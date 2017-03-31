@@ -74,9 +74,8 @@ class SettingsGroup extends Model
             }
 
             return $value;
-        } else {
-            return parent::__get($name);
         }
+        return parent::__get($name);
     }
 
     public function __set($name, $value)

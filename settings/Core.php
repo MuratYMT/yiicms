@@ -69,6 +69,11 @@ class Core extends SettingsBlock
                             'method' => function ($attribute, $params) {
                                 /** @var Model $model */
                                 $model = $params['model'];
+
+                                if (empty($model->$attribute)) {
+                                    return;
+                                }
+
                                 $ar = explode('/', $model->$attribute);
                                 $slug = array_pop($ar);
                                 if (null === Page::findBySlug($slug)) {

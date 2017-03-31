@@ -772,11 +772,11 @@ class m170217_022743_init extends Migration
     {
         $columns = [
             'paramName' => $this->string(100)->notNull(),
-            'value' => 'LONGTEXT NOT NULL',
+            'value' => 'LONGTEXT',
         ];
 
         if ($this->db->driverName === 'pgsql') {
-            $columns['value'] = 'JSONB NOT NULL';
+            $columns['value'] = 'JSONB';
         }
 
         $this->createTable(Settings::tableName(), $columns, $tableOptions);
