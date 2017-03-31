@@ -97,6 +97,6 @@ return [
         'settings' => [
             'class' => Settings::class,
         ],
-        'db' => require __DIR__ . '/include/db-pgsql.php',
+        'db' => require __DIR__ . '/include/db-mysql.php',
     ],
 ];

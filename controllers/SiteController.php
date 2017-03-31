@@ -14,6 +14,7 @@ use yii\web\ErrorAction;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
 use yii\web\Controller;
+use yiicms\models\content\Page;
 use yiicms\models\core\LoadedFiles;
 use yiicms\models\core\Settings;
 
@@ -37,6 +38,13 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
+        if (null !== ($pageSlug = Settings::get('core.firstPage'))) {
+            $page = Page::findBySlug($pageSlug);
+            if ($page !== null) {
+                $this->layout = '@theme/views/layouts/first-page-layout';
+                return $this->renderContent($page->pageText);
+            }
+        }
         $this->view->title = Settings::get('core.siteName');
         return $this->render('index');
     }

@@ -8,11 +8,14 @@
 
 namespace yiicms\settings;
 
+use yii\base\Model;
 use yii\widgets\ActiveForm;
 use yiicms\components\admin\SettingsGroup;
 use yiicms\components\core\SettingsBlock;
+use yiicms\components\core\validators\InlineValidator;
 use yiicms\components\core\validators\StringArrayValidator;
 use yiicms\components\core\yii\Theme;
+use yiicms\models\content\Page;
 use yiicms\themes\base\BaseTheme;
 
 class Core extends SettingsBlock
@@ -53,6 +56,27 @@ class Core extends SettingsBlock
                     'rules' => [
                         ['string', 'max' => 200],
                         ['in', 'range' => Theme::availableThemes()],
+                    ],
+                ],
+                'firstPage' => [
+                    'title' => \Yii::t('modules/admin', 'Первая страница'),
+                    'value' => null,
+                    'rules' => [
+                        ['default'],
+                        ['string', 'max' => 235],
+                        [
+                            InlineValidator::class,
+                            'method' => function ($attribute, $params) {
+                                /** @var Model $model */
+                                $model = $params['model'];
+                                $ar = explode('/', $model->$attribute);
+                                $slug = array_pop($ar);
+                                if (null === Page::findBySlug($slug)) {
+                                    $model->addError($attribute, \Yii::t('yiicms', 'Неизвестная ссылка на страницу'));
+                                }
+                                $model->$attribute = $slug;
+                            },
+                        ],
                     ],
                 ],
             ],
@@ -135,12 +159,13 @@ class Core extends SettingsBlock
         $themItems = [];
         /** @var Theme[] $themes */
         $themes = Theme::availableThemes();
-        foreach ($themes as $theme){
+        foreach ($themes as $theme) {
             /** @noinspection PhpIllegalArrayKeyTypeInspection */
             $themItems[$theme] = $theme::themeTitle();
         }
 
         echo $form->field($model, 'theme')->dropDownList($themItems);
+        echo $form->field($model, 'firstPage')->textInput();
 
         return ob_get_clean();
     }
