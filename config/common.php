@@ -21,6 +21,11 @@ return [
     'vendorPath' => dirname(__DIR__) . '/vendor',
     'runtimePath' => dirname(__DIR__) . '/runtime',
     'controllerNamespace' => 'yiicms\controllers',
+    'settingsNamespaces' => ['yiicms\\settings'],
+    'blocksNamespaces' => ['yiicms\\blocks'],
+    'cronjobsNamespaces' => ['yiicms\\cronjobs'],
+    'themesNamespaces' => ['yiicms\\themes'],
+    'adminMenuNamespaces' => 'yiicms\\config\\adminmenu',
     'modules' => require __DIR__ . '/include/modules.php',
     'controllerMap' => [
         'migrate' => [
