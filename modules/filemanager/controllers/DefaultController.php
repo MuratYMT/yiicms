@@ -86,10 +86,10 @@ class DefaultController extends Controller
                     'rename-folder' => ['POST', 'GET'],
                     'delete-folder' => ['POST'],
                     'delete-file' => ['POST'],
-                    'load-files' => ['POST'],
+                    'load-files' => ['POST', 'GET'],
                     '*' => [],
-                ]
-            ]
+                ],
+            ],
         ];
     }
 
