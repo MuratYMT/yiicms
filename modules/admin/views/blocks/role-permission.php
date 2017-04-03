@@ -50,7 +50,7 @@ $gridConfig = [
                     return Html::a(
                         '<i class="fa fa-plus"></i> ' . \Yii::t('yiicms', 'Разрешить'),
                         Url::toWithNewReturn([
-                            '/admin/blocks/role-visiable-grant',
+                            '/admin/blocks/role-visible-grant',
                             'blockId' => $blockId,
                             'roleName' => $model['roleName'],
                         ]),
@@ -61,7 +61,7 @@ $gridConfig = [
                     return Html::a(
                         '<i class="fa fa-minus"></i> ' . \Yii::t('yiicms', 'Отменить'),
                         Url::toWithNewReturn([
-                            '/admin/blocks/role-visiable-revoke',
+                            '/admin/blocks/role-visible-revoke',
                             'blockId' => $blockId,
                             'roleName' => $model['roleName'],
                         ]),

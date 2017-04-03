@@ -137,7 +137,7 @@ class MenusController extends Controller
         return $this->render('role-permission', ['dataProvider' => $dataProvider, 'menuId' => $menu->menuId, 'model' => $model]);
     }
 
-    public function actionRoleVisiableGrant($menuId, $roleName, $recursive = false)
+    public function actionRoleVisibleGrant($menuId, $roleName, $recursive = false)
     {
         $menu = self::findMenuAndCheckRole($menuId, $roleName);
         $menu->grant($roleName, $recursive);
@@ -145,7 +145,7 @@ class MenusController extends Controller
         return Url::goReturn();
     }
 
-    public function actionRoleVisiableRevoke($menuId, $roleName, $recursive = false)
+    public function actionRoleVisibleRevoke($menuId, $roleName, $recursive = false)
     {
         $menu = self::findMenuAndCheckRole($menuId, $roleName);
         $menu->revoke($roleName, $recursive);

@@ -132,7 +132,7 @@ class BlocksController extends Controller
         return $this->render('role-permission', ['dataProvider' => $dataProvider, 'blockId' => $block->blockId, 'model' => $model]);
     }
 
-    public function actionRoleVisiableGrant($blockId, $roleName)
+    public function actionRoleVisibleGrant($blockId, $roleName)
     {
         $block = self::checkBlockAndRole($blockId, $roleName);
         $block->grant($roleName);
@@ -141,7 +141,7 @@ class BlocksController extends Controller
         return $this->actionRoleVisible($blockId);
     }
 
-    public function actionRoleVisiableRevoke($blockId, $roleName)
+    public function actionRoleVisibleRevoke($blockId, $roleName)
     {
         $block = self::checkBlockAndRole($blockId, $roleName);
         $block->revoke($roleName);

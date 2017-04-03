@@ -49,7 +49,7 @@ $gridConfig = [
                 'grant' => function ($url, $model) use ($menuId) {
                     return Html::a(
                         '<i class="fa fa-plus"></i> ' . \Yii::t('yiicms', 'Разрешить'),
-                        Url::toWithNewReturn(['/admin/menus/role-visiable-grant', 'menuId' => $menuId, 'roleName' => $model['roleName']]),
+                        Url::toWithNewReturn(['/admin/menus/role-visible-grant', 'menuId' => $menuId, 'roleName' => $model['roleName']]),
                         ['data-method' => 'post', 'title' => \Yii::t('yiicms', 'Разрешить пользователям этой роли видеть пункт меню')]
                     );
                 },
@@ -57,7 +57,7 @@ $gridConfig = [
                     return Html::a(
                         '<i class="fa fa-plus-square"></i> ' . \Yii::t('yiicms', 'Разрешить рекурсивно'),
                         Url::toWithNewReturn([
-                            '/admin/menus/role-visiable-grant',
+                            '/admin/menus/role-visible-grant',
                             'menuId' => $menuId,
                             'roleName' => $model['roleName'],
                             'recursive' => true,
@@ -71,7 +71,7 @@ $gridConfig = [
                 'revoke' => function ($url, $model) use ($menuId) {
                     return Html::a(
                         '<i class="fa fa-minus"></i> ' . \Yii::t('yiicms', 'Отменить'),
-                        Url::toWithNewReturn(['/admin/menus/role-visiable-revoke', 'menuId' => $menuId, 'roleName' => $model['roleName']]),
+                        Url::toWithNewReturn(['/admin/menus/role-visible-revoke', 'menuId' => $menuId, 'roleName' => $model['roleName']]),
                         ['data-method' => 'post', 'title' => \Yii::t('yiicms', 'Отменить видимость пункта меню пользователям этой роли')]
                     );
                 },
@@ -79,7 +79,7 @@ $gridConfig = [
                     return Html::a(
                         '<i class="fa fa-minus-square"></i> ' . \Yii::t('yiicms', 'Отменить рекурсивно'),
                         Url::toWithNewReturn([
-                            '/admin/menus/role-visiable-revoke',
+                            '/admin/menus/role-visible-revoke',
                             'menuId' => $menuId,
                             'roleName' => $model['roleName'],
                             'recursive' => true,
