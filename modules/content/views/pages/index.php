@@ -21,8 +21,8 @@ foreach ($page->images as $image) {
         'content' => [
             Html::img(
                 $image->asThumbnail($this, 900, 500),
-                ['style' => 'width:100%'])
-        ]
+                ['style' => 'width:100%']),
+        ],
     ];
 }
 
@@ -50,7 +50,7 @@ foreach ($page->images as $image) {
                 'autoplay' => 2500,
                 'loop' => true,
                 'fade' => [
-                    'crossFade' => false
+                    'crossFade' => false,
                 ],
                 'coverflow' => [
                     'rotate' => 50,
@@ -58,8 +58,8 @@ foreach ($page->images as $image) {
                     'depth' => 100,
                     'modifier' => 1,
                     'slideShadows' => true,
-                ]
-            ]
+                ],
+            ],
         ]) ?>
         <div class="meta">
             <a href="<?= Url::to(['/profile', 'userId' => $page->ownerId]) ?>" class="link-icon"><i
@@ -78,7 +78,9 @@ foreach ($page->images as $image) {
         <?= $page->pageText ?>
     </div>
     <!-- /#content -->
-    <?= $this->render('_comments', ['page' => $page]); ?>
+    <?php if ($page->opened) : ?>
+        <?= $this->render('_comments', ['page' => $page]); ?>
+    <?php endif; ?>
     <!-- /#comments -->
 </div><!-- /.col-md-9 -->
 <!-- end Content -->
