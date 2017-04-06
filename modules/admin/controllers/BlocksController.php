@@ -138,7 +138,7 @@ class BlocksController extends Controller
         $block->grant($roleName);
 
         Alert::success(\Yii::t('yiicms', 'Видимость блока для роли "{role}" предоставлена', ['role' => $roleName]));
-        return $this->actionRoleVisible($blockId);
+        return Url::goReturn();
     }
 
     public function actionRoleVisibleRevoke($blockId, $roleName)
@@ -147,7 +147,7 @@ class BlocksController extends Controller
         $block->revoke($roleName);
 
         Alert::success(\Yii::t('yiicms', 'Видимость блока для роли "{role}" отменена', ['role' => $roleName]));
-        return $this->actionRoleVisible($blockId);
+        return Url::goReturn();
     }
 
     public function actionPathInfoVisible($blockId)
