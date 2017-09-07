@@ -13,6 +13,7 @@ use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yiicms\components\core\Url;
+use yiicms\components\YiiCms;
 use yiicms\modules\admin\models\blocks\BlocksSearch;
 use yiicms\modules\admin\models\blocks\BlocksVisibleForPathInfoSearch;
 use yiicms\modules\admin\models\blocks\BlocksVisibleForRoleSearch;
@@ -93,7 +94,7 @@ class BlocksController extends Controller
     {
         $request = \Yii::$app->request;
 
-        if (!in_array($contentClass, Blocks::getAvailableBlocksClass(), true)) {
+        if (!in_array($contentClass, YiiCms::$app->blockService->getAvailableBlocksClass(), true)) {
             throw new NotFoundHttpException;
         }
 
@@ -135,7 +136,7 @@ class BlocksController extends Controller
     public function actionRoleVisibleGrant($blockId, $roleName)
     {
         $block = self::checkBlockAndRole($blockId, $roleName);
-        $block->grant($roleName);
+        YiiCms::$app->blockService->grant($block, $roleName);
 
         Alert::success(\Yii::t('yiicms', 'Видимость блока для роли "{role}" предоставлена', ['role' => $roleName]));
         return Url::goReturn();
@@ -144,7 +145,7 @@ class BlocksController extends Controller
     public function actionRoleVisibleRevoke($blockId, $roleName)
     {
         $block = self::checkBlockAndRole($blockId, $roleName);
-        $block->revoke($roleName);
+        YiiCms::$app->blockService->revoke($block, $roleName);
 
         Alert::success(\Yii::t('yiicms', 'Видимость блока для роли "{role}" отменена', ['role' => $roleName]));
         return Url::goReturn();
@@ -157,8 +158,15 @@ class BlocksController extends Controller
         $model = new BlocksVisibleForPathInfoSearch();
         $dataProvider = $model->search($blockId);
 
-        $this->view->title = \Yii::t('yiicms', 'Правила видимости блока "{block}" на страницах сайта', ['block' => $block->title]);
-        return $this->render('pathinfo-permission', ['dataProvider' => $dataProvider, 'blockId' => $block->blockId, 'model' => $model]);
+        $this->view->title = \Yii::t(
+            'yiicms',
+            'Правила видимости блока "{block}" на страницах сайта',
+            ['block' => $block->title]
+        );
+        return $this->render(
+            'pathinfo-permission',
+            ['dataProvider' => $dataProvider, 'blockId' => $block->blockId, 'model' => $model]
+        );
     }
 
     public function actionPathInfoVisibleAdd($blockId)

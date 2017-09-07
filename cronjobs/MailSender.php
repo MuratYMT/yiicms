@@ -9,6 +9,7 @@
 namespace yiicms\cronjobs;
 
 use yiicms\components\core\cronjob\CronJob;
+use yiicms\components\YiiCms;
 use yiicms\models\core\Mails;
 
 class MailSender extends CronJob
@@ -26,9 +27,9 @@ class MailSender extends CronJob
         if (!$this->grabMails($backendId)) {
             return true;
         }
-
+        $mailService = YiiCms::$app->mailService;
         foreach (Mails::findAll(['backEndId' => $backendId]) as $mail) {
-            $mail->sendToReciver();
+            $mailService->sendToReciver($mail);
         }
         return true;
     }

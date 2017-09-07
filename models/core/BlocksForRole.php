@@ -57,39 +57,7 @@ class BlocksForRole extends ActiveRecord
         ];
     }
 
-    /**
-     * делает пункт меню видимым для роли
-     * @param int $blockId ID пункта меню
-     * @param string $roleName для какой роли
-     * @return bool
-     */
-    public static function grant($blockId, $roleName)
-    {
-        $mfr = self::findOne(['roleName' => $roleName, 'blockId' => $blockId]);
-        if ($mfr !== null) {
-            return true;
-        }
-        $mfr = new self(['roleName' => $roleName, 'blockId' => $blockId]);
-        return $mfr->save();
-    }
-
-    /**
-     * делает пункт меню невидимым для роли
-     * @param int $blockId ID пункта меню
-     * @param string $roleName для какой роли
-     * @return bool
-     */
-    public static function revoke($blockId, $roleName)
-    {
-        $mfr = self::findOne(['roleName' => $roleName, 'blockId' => $blockId]);
-        if ($mfr === null) {
-            return true;
-        }
-
-        return false !== $mfr->delete();
-    }
-
-    // ------------------------------------------------------ связи --------------------------------------------------------------
+    // ------------------------------------------------------ связи ---------------------------------------------------
 
     /**
      * @return \yii\db\ActiveQuery
@@ -99,7 +67,7 @@ class BlocksForRole extends ActiveRecord
         return $this->hasOne(Blocks::class, ['blockId' => 'blockId']);
     }
 
-    // ---------------------------------------------- геттеры и сеттеры -------------------------------------------------------------
+    // ---------------------------------------------- геттеры и сеттеры -----------------------------------------------
 
     public function getRole()
     {

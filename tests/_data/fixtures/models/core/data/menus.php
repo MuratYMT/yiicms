@@ -7,6 +7,7 @@
  */
 
 use yiicms\components\core\MultiLangHelper;
+use yiicms\models\core\constants\VisibleForPathInfoConst;
 use yiicms\models\core\VisibleForPathInfo;
 
 return [
@@ -16,7 +17,7 @@ return [
         'mPath' => '100',
         'link' => 'l1',
         'weight' => 0,
-        'pathInfoVisibleOrder' => VisibleForPathInfo::VISIBLE_IGNORE,
+        'pathInfoVisibleOrder' => VisibleForPathInfoConst::VISIBLE_IGNORE,
         'titleM' => MultiLangHelper::setValue([], 'menu1', 'ru'),
         'subTitleM' => json_encode([])
     ],
@@ -26,7 +27,7 @@ return [
         'mPath' => '200',
         'link' => 'l2',
         'weight' => 0,
-        'pathInfoVisibleOrder' => VisibleForPathInfo::VISIBLE_IGNORE,
+        'pathInfoVisibleOrder' => VisibleForPathInfoConst::VISIBLE_IGNORE,
         'titleM' => MultiLangHelper::setValue([], 'menu2', 'ru'),
         'subTitleM' => json_encode([])
     ],
@@ -36,7 +37,7 @@ return [
         'mPath' => '200^210',
         'link' => 'l21',
         'weight' => 0,
-        'pathInfoVisibleOrder' => VisibleForPathInfo::VISIBLE_IGNORE,
+        'pathInfoVisibleOrder' => VisibleForPathInfoConst::VISIBLE_IGNORE,
         'titleM' => MultiLangHelper::setValue([], 'menu21', 'ru'),
         'subTitleM' => json_encode([])
     ],
@@ -46,7 +47,7 @@ return [
         'mPath' => '200^220',
         'link' => 'l22',
         'weight' => 0,
-        'pathInfoVisibleOrder' => VisibleForPathInfo::VISIBLE_IGNORE,
+        'pathInfoVisibleOrder' => VisibleForPathInfoConst::VISIBLE_IGNORE,
         'titleM' => MultiLangHelper::setValue([], 'menu22', 'ru'),
         'subTitleM' => json_encode([])
     ],
@@ -56,7 +57,7 @@ return [
         'mPath' => '200^220^221',
         'link' => 'l221',
         'weight' => 0,
-        'pathInfoVisibleOrder' => VisibleForPathInfo::VISIBLE_IGNORE,
+        'pathInfoVisibleOrder' => VisibleForPathInfoConst::VISIBLE_IGNORE,
         'titleM' => MultiLangHelper::setValue([], 'menu221', 'ru'),
         'subTitleM' => json_encode([])
     ],
@@ -66,7 +67,7 @@ return [
         'mPath' => '200^220^222',
         'link' => 'l222',
         'weight' => 0,
-        'pathInfoVisibleOrder' => VisibleForPathInfo::VISIBLE_IGNORE,
+        'pathInfoVisibleOrder' => VisibleForPathInfoConst::VISIBLE_IGNORE,
         'titleM' => MultiLangHelper::setValue([], 'menu222', 'ru'),
         'subTitleM' => json_encode([])
     ],
@@ -76,7 +77,7 @@ return [
         'mPath' => '200^220^223',
         'link' => 'l223',
         'weight' => 0,
-        'pathInfoVisibleOrder' => VisibleForPathInfo::VISIBLE_IGNORE,
+        'pathInfoVisibleOrder' => VisibleForPathInfoConst::VISIBLE_IGNORE,
         'titleM' => MultiLangHelper::setValue([], 'menu223', 'ru'),
         'subTitleM' => json_encode([])
     ],
@@ -86,7 +87,7 @@ return [
         'mPath' => '200^220^223^2231',
         'link' => 'l2231',
         'weight' => 0,
-        'pathInfoVisibleOrder' => VisibleForPathInfo::VISIBLE_IGNORE,
+        'pathInfoVisibleOrder' => VisibleForPathInfoConst::VISIBLE_IGNORE,
         'titleM' => MultiLangHelper::setValue([], 'menu2231', 'ru'),
         'subTitleM' => json_encode([])
     ],
@@ -96,7 +97,7 @@ return [
         'mPath' => '200^230',
         'link' => 'l23',
         'weight' => 0,
-        'pathInfoVisibleOrder' => VisibleForPathInfo::VISIBLE_IGNORE,
+        'pathInfoVisibleOrder' => VisibleForPathInfoConst::VISIBLE_IGNORE,
         'titleM' => MultiLangHelper::setValue([], 'menu23', 'ru'),
         'subTitleM' => json_encode([])
     ],
@@ -106,7 +107,7 @@ return [
         'mPath' => '300',
         'link' => 'l3',
         'weight' => 0,
-        'pathInfoVisibleOrder' => VisibleForPathInfo::VISIBLE_IGNORE,
+        'pathInfoVisibleOrder' => VisibleForPathInfoConst::VISIBLE_IGNORE,
         'titleM' => MultiLangHelper::setValue([], 'menu3', 'ru'),
         'subTitleM' => json_encode([])
     ]

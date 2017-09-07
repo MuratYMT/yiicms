@@ -15,7 +15,7 @@ use yii\swiftmailer\Mailer;
 use yiicms\models\core\Log;
 use yiicms\models\core\Settings;
 
-return [
+$config = [
     'id' => 'yiicms',
     'basePath' => dirname(__DIR__),
     'vendorPath' => dirname(__DIR__) . '/vendor',
@@ -97,6 +97,34 @@ return [
         'settings' => [
             'class' => Settings::class,
         ],
-        'db' => require __DIR__ . '/include/db-mysql.php',
+        'db' => [
+            'class' => \yiicms\components\core\db\Connection::class,
+            'dsn' => 'mysql:host=localhost;dbname=yiicms',
+            'username' => 'root',
+            'password' => 'root',
+            'charset' => 'utf8',
+            'enableSchemaCache' => true,
+            //'attributes' => [PDO::ATTR_PERSISTENT => true]
+        ],
+        'blockService' => [
+            'class' => \yiicms\services\BlockService::class,
+        ]
     ],
 ];
+
+if (!YII_ENV_TEST) {
+    // configuration adjustments for 'dev' environment
+    $config['bootstrap'][] = 'debug';
+    $config['modules']['debug'] = [
+        'class' => \yii\debug\Module::class,
+        'allowedIPs' => ['192.168.56.1'],
+    ];
+
+    $config['bootstrap'][] = 'gii';
+    $config['modules']['gii'] = [
+        'class' => \yii\gii\Module::class,
+        'allowedIPs' => ['127.0.0.1', '::1', '192.168.56.1'],
+    ];
+}
+
+return $config;

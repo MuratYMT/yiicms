@@ -11,6 +11,7 @@ namespace yiicms\blocks\MenuBlock;
 use yiicms\components\core\blocks\BlockWidget;
 use yiicms\components\core\Helper;
 use yiicms\components\core\TreeHelper;
+use yiicms\components\YiiCms;
 use yiicms\models\core\Menus;
 
 /**
@@ -33,7 +34,7 @@ class Widget extends BlockWidget
      */
     public function run()
     {
-        $menuItems = Menus::branchForUser(\Yii::$app->user->id, $this->rootMenuId);
+        $menuItems = YiiCms::$app->menuService->branchForUser(\Yii::$app->user->id, $this->rootMenuId);
 
         $rootMenu = Menus::findOne($this->rootMenuId);
         if ($rootMenu === null) {

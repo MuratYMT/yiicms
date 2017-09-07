@@ -11,6 +11,7 @@ use yiicms\components\core\validators\WebTextValidator;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yiicms\components\YiiCms;
 
 /**
  * This is the model class for table "web.pmailsOutgoing".
@@ -123,63 +124,12 @@ class PmailsOutgoing extends ActiveRecord
         ];
     }
 
-    public function beforeSave($insert)
-    {
-        if ($insert && $this->talkId === null) {
-            $this->talkId = \Yii::$app->security->generateRandomString(32);
-        }
-        $this->trgmToUsers = implode('|', $this->toUsersList);
-        if ($this->sended && (int)$this->sended !== (int)$this->getOldAttribute('sended')) {
-            $this->sentAt = DateTime::runTime();
-        }
-        return parent::beforeSave($insert);
-    }
-
-    public function afterSave($insert, $changedAttributes)
-    {
-        parent::afterSave($insert, $changedAttributes);
-        if ($insert) {
-            PmailsUserStat::changePmTotalCount($this->fromUser, 1);
-        }
-        if (array_key_exists('sended', $changedAttributes) && (int)$this->sended === 1) {
-            $this->send($this->sentAt);
-        }
-    }
-
-    /**
-     * выполняет отправку уже сохраненного письма
-     * @param DateTime $sentAt
-     */
-    protected function send(DateTime $sentAt)
-    {
-        foreach ($this->toUsers as $toUser) {
-            $pmailIncoming = new PmailsIncoming([
-                'talkId' => $this->talkId,
-                'toUserId' => $toUser->userId,
-                'fromUserId' => $this->fromUser->userId,
-                'fromUserLogin' => $this->fromUser->login,
-                'subject' => $this->subject,
-                'msgText' => $this->msgText,
-                'readed' => false,
-                'sentAt' => $sentAt,
-            ]);
-            $pmailIncoming->scenario = PmailsIncoming::SC_INSERT;
-            $pmailIncoming->save();
-        }
-    }
-
-    public function afterDelete()
-    {
-        parent::afterDelete();
-        PmailsUserStat::changePmTotalCount($this->fromUser, -1);
-    }
-
     public function sendMessage()
     {
         $this->sended = 1;
         $scenario = $this->scenario;
         $this->scenario = self::SC_SEND;
-        $result = $this->save();
+        $result = YiiCms::$app->pmailService->outgoingPmailSave($this);
         $this->scenario = $scenario;
         return $result;
     }
@@ -234,14 +184,14 @@ class PmailsOutgoing extends ActiveRecord
 
         $pmailOutgoing->scenario = self::SC_EDIT;
 
-        if (!$pmailOutgoing->save()) {
+        if (!YiiCms::$app->pmailService->outgoingPmailSave($pmailOutgoing)) {
             return false;
         }
 
         return $pmailOutgoing;
     }
 
-    // ----------------------------------------------------- связи ---------------------------------------------------------
+    // ----------------------------------------------------- связи ----------------------------------------------------
 
     /**
      * @return \yii\db\ActiveQuery

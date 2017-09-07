@@ -8,6 +8,8 @@
 
 namespace common\unit\test\models\web;
 
+use yiicms\components\YiiCms;
+use yiicms\models\core\constants\VisibleForPathInfoConst;
 use yiicms\models\core\Menus;
 use yiicms\models\core\MenusForRole;
 use yiicms\models\core\MenusVisibleForPathInfo;
@@ -35,11 +37,11 @@ class MenusCest extends UnitCest
     public function testGrantRevoke(\MyUnitTester $I)
     {
         $menu = $this->_menus('m2');
-
+        $menuService = YiiCms::$app->menuService;
         $I->assertNull(MenusForRole::findOne(['menuId' => $menu->menuId, 'roleName' => 'role3']));
-        $I->assertTrue($menu->grant('role3'));
+        $I->assertTrue($menuService->grant($menu, 'role3'));
         $I->assertNotNull(MenusForRole::findOne(['menuId' => $menu->menuId, 'roleName' => 'role3']));
-        $I->assertTrue($menu->revoke('role3'));
+        $I->assertTrue($menuService->revoke($menu, 'role3'));
         $I->assertNull(MenusForRole::findOne(['menuId' => $menu->menuId, 'roleName' => 'role3']));
 
         $menu22 = $this->_menus('m22');
@@ -48,12 +50,12 @@ class MenusCest extends UnitCest
         $I->assertNull(MenusForRole::findOne(['menuId' => $menu22->menuId, 'roleName' => 'role3']));
         $I->assertNull(MenusForRole::findOne(['menuId' => $menu222->menuId, 'roleName' => 'role3']));
 
-        $I->assertTrue($menu->grant('role3', true));
+        $I->assertTrue($menuService->grant($menu, 'role3', true));
         $I->assertNotNull(MenusForRole::findOne(['menuId' => $menu->menuId, 'roleName' => 'role3']));
         $I->assertNotNull(MenusForRole::findOne(['menuId' => $menu22->menuId, 'roleName' => 'role3']));
         $I->assertNotNull(MenusForRole::findOne(['menuId' => $menu222->menuId, 'roleName' => 'role3']));
 
-        $I->assertTrue($menu->revoke('role3', true));
+        $I->assertTrue($menuService->revoke($menu, 'role3', true));
         $I->assertNull(MenusForRole::findOne(['menuId' => $menu->menuId, 'roleName' => 'role3']));
         $I->assertNull(MenusForRole::findOne(['menuId' => $menu22->menuId, 'roleName' => 'role3']));
         $I->assertNull(MenusForRole::findOne(['menuId' => $menu222->menuId, 'roleName' => 'role3']));
@@ -62,7 +64,7 @@ class MenusCest extends UnitCest
     public function testDelete(\MyUnitTester $I)
     {
         $menu = $this->_menus('m2');
-        $I->assertNotFalse($menu->delete());
+        $I->assertNotFalse(YiiCms::$app->menuService->delete($menu));
 
         $I->assertNull($menu21 = Menus::findOne(200));
         $I->assertNotNull($menu21 = Menus::findOne(220));
@@ -81,7 +83,7 @@ class MenusCest extends UnitCest
     public function testDeleteWithChildren(\MyUnitTester $I)
     {
         $menu = $this->_menus('m2');
-        $I->assertEquals(8, $menu->deleteRecursive());
+        $I->assertEquals(8, YiiCms::$app->menuService->delete($menu, true));
         $I->assertNull(Menus::findOne(200));
         $I->assertNull(Menus::findOne(210));
         $I->assertNull(Menus::findOne(220));
@@ -95,8 +97,8 @@ class MenusCest extends UnitCest
     public function testBranchForUser(\MyUnitTester $I)
     {
         \Yii::$app->request->pathInfo = 'index';
-
-        $menus = Menus::branchForUser(220, 200);
+        $menuService = YiiCms::$app->menuService;
+        $menus = $menuService->branchForUser(220, 200);
         $I->assertCount(5, $menus);
 
         foreach ($menus as $menu) {
@@ -106,15 +108,15 @@ class MenusCest extends UnitCest
         //210 запрещаем показ по пути содеражащему nde
         $mfp = new MenusVisibleForPathInfo([
             'menuId' => 210,
-            'rule' => MenusVisibleForPathInfo::RULE_CONTAIN,
+            'rule' => VisibleForPathInfoConst::RULE_CONTAIN,
             'template' => 'nde',
         ]);
         $I->assertTrue($mfp->save());
         $menu = Menus::findOne(210);
-        $menu->pathInfoVisibleOrder = MenusVisibleForPathInfo::VISIBLE_ALLOW_DENY;
-        $I->assertTrue($menu->save());
+        $menu->pathInfoVisibleOrder = VisibleForPathInfoConst::VISIBLE_ALLOW_DENY;
+        $I->assertTrue($menuService->save($menu));
 
-        $menus = Menus::branchForUser(220, 200);
+        $menus = $menuService->branchForUser(220, 200);
         $I->assertCount(4, $menus);
         $I->assertNotContains(210, array_keys($menus));
         foreach ($menus as $menu) {
@@ -123,10 +125,10 @@ class MenusCest extends UnitCest
 
         //210 разрешаем показ только по пути содеражащему nde
         $menu = Menus::findOne(210);
-        $menu->pathInfoVisibleOrder = MenusVisibleForPathInfo::VISIBLE_DENY_ALLOW;
-        $I->assertTrue($menu->save());
+        $menu->pathInfoVisibleOrder = VisibleForPathInfoConst::VISIBLE_DENY_ALLOW;
+        $I->assertTrue($menuService->save($menu));
 
-        $menus = Menus::branchForUser(220, 200);
+        $menus = $menuService->branchForUser(220, 200);
         $I->assertCount(5, $menus);
         $I->assertContains(210, array_keys($menus));
         foreach ($menus as $menu) {
@@ -135,7 +137,7 @@ class MenusCest extends UnitCest
 
         \Yii::$app->request->pathInfo = 'test';
 
-        $menus = Menus::branchForUser(220, 200);
+        $menus = $menuService->branchForUser(220, 200);
         $I->assertCount(4, $menus);
         $I->assertNotContains(210, array_keys($menus));
         foreach ($menus as $menu) {
@@ -146,12 +148,13 @@ class MenusCest extends UnitCest
     public function testBranchForUserWithRecursiveRole(\MyUnitTester $I)
     {
         \Yii::$app->request->pathInfo = 'index';
+        $menuService = YiiCms::$app->menuService;
 
         $auth = \Yii::$app->authManager;
         $auth->revoke($auth->getRole('role3'), 220);
         $auth->assign($auth->getRole('role1'), 220);
 
-        $menus = Menus::branchForUser(220, 200);
+        $menus = $menuService->branchForUser(220, 200);
         $I->assertCount(5, $menus);
 
         foreach ($menus as $menu) {
@@ -161,7 +164,7 @@ class MenusCest extends UnitCest
         $mfr = MenusForRole::findOne(['menuId' => 230, 'roleName' => 'role1']);
         $I->assertNotFalse($mfr->delete());
 
-        $menus = Menus::branchForUser(220, 200);
+        $menus = $menuService->branchForUser(220, 200);
         $I->assertCount(4, $menus);
 
         foreach ($menus as $menu) {
@@ -171,7 +174,7 @@ class MenusCest extends UnitCest
         $mfr = new MenusForRole(['menuId' => 230, 'roleName' => 'role111']);
         $I->assertTrue($mfr->save());
 
-        $menus = Menus::branchForUser(220, 200);
+        $menus = $menuService->branchForUser(220, 200);
         $I->assertCount(5, $menus);
 
         foreach ($menus as $menu) {
@@ -203,7 +206,7 @@ class MenusCest extends UnitCest
         $I->seeRecord(MenusForRole::className(), ['roleName' => 'role2', 'menuId' => 2231]);
 
         //
-        $I->assertTrue($this->_menus('m2')->replaceChildrenVisibleForRole());
+        $I->assertTrue(YiiCms::$app->menuService->replaceChildrenVisibleForRole($this->_menus('m2')));
 
         $I->seeRecord(MenusForRole::className(), ['roleName' => 'role1', 'menuId' => 220]);
         $I->seeRecord(MenusForRole::className(), ['roleName' => 'role1', 'menuId' => 223]);

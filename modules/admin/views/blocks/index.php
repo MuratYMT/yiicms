@@ -13,7 +13,9 @@ use yii\bootstrap\Dropdown;
 use yii\helpers\Html;
 use yiicms\components\core\blocks\BlockWidget;
 use yiicms\components\core\Url;
+use yiicms\components\YiiCms;
 use yiicms\models\core\Blocks;
+use yiicms\models\core\constants\VisibleForPathInfoConst;
 use yiicms\models\core\VisibleForPathInfo;
 use yiicms\modules\admin\components\adminlte\GridView;
 use yiicms\modules\admin\models\blocks\BlocksSearch;
@@ -47,7 +49,10 @@ $gridConfig = [
         'description',
         [
             'attribute' => 'position',
-            'filter' => array_combine(Blocks::availablePosition(), Blocks::availablePosition()),
+            'filter' => array_combine(
+                YiiCms::$app->blockService->availablePosition(),
+                YiiCms::$app->blockService->availablePosition()
+            ),
         ],
         'weight',
         [
@@ -58,14 +63,18 @@ $gridConfig = [
         [
             'attribute' => 'pathInfoVisibleOrder',
             'class' => FormulaColumn::class,
-            'filter' => array_combine(VisibleForPathInfo::$visibleArray, VisibleForPathInfo::visibleOrderLabels()),
+            'filter' => array_combine(
+                VisibleForPathInfoConst::VISIBLE_ARRAY,
+                YiiCms::$app->blockService->visibleOrderLabels()
+            ),
             'value' => function ($model) {
-                return VisibleForPathInfo::visibleOrderLabels($model['pathInfoVisibleOrder']);
+                return YiiCms::$app->blockService->visibleOrderLabels($model['pathInfoVisibleOrder']);
             },
         ],
         [
             'class' => ActionColumn::class,
-            'template' => '<li>{edit}</li><li>{del}</li><li><hr></li><li>{role-visible}</li><li>{pathinfo-visible}</li>',
+            'template' => '<li>{edit}</li><li>{del}</li><li>
+                <hr></li><li>{role-visible}</li><li>{pathinfo-visible}</li>',
             'dropdownOptions' => ['class' => 'pull-right'],
             'dropdown' => true,
             'dropdownButton' => ['class' => 'btn btn-primary', 'label' => '<i class="fa fa-cogs"></i>'],
@@ -81,7 +90,11 @@ $gridConfig = [
                     return Html::a(
                         '<i class="fa fa-trash"></i> ' . \Yii::t('yiicms', 'Удалить'),
                         Url::toWithNewReturn(['/admin/blocks/del-block', 'blockId' => $model['blockId']]),
-                        ['data-method' => 'post', 'data-confirm' => \Yii::t('yiicms', 'Удалить?'), 'title' => \Yii::t('yiicms', 'Удалить этот блок')]
+                        [
+                            'data-method' => 'post',
+                            'data-confirm' => \Yii::t('yiicms', 'Удалить?'),
+                            'title' => \Yii::t('yiicms', 'Удалить этот блок')
+                        ]
                     );
                 },
                 'role-visible' => function ($url, $model) {
@@ -95,7 +108,10 @@ $gridConfig = [
                     return Html::a(
                         '<i class="fa fa-files-o"></i> ' . \Yii::t('yiicms', 'Видимость на страницах'),
                         Url::toWithNewReturn(['/admin/blocks/path-info-visible', 'blockId' => $model['blockId']]),
-                        ['title' => \Yii::t('yiicms', 'Видимость блоков на различных страницах сайта'), 'data-pjax' => 0]
+                        [
+                            'title' => \Yii::t('yiicms', 'Видимость блоков на различных страницах сайта'),
+                            'data-pjax' => 0
+                        ]
                     );
                 },
             ],
@@ -104,7 +120,7 @@ $gridConfig = [
 ];
 
 $dropdown = [];
-foreach (Blocks::getAvailableBlocksClass() as $class) {
+foreach (YiiCms::$app->blockService->getAvailableBlocksClass() as $class) {
     /** @var BlockWidget $obj */
     $obj = new $class;
     $dropdown[$class] = [

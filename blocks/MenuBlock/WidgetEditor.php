@@ -9,7 +9,7 @@
 namespace yiicms\blocks\MenuBlock;
 
 use yiicms\components\core\blocks\BlockEditor;
-use yiicms\models\core\Menus;
+use yiicms\components\YiiCms;
 
 /**
  * Class Editor
@@ -55,7 +55,7 @@ class WidgetEditor extends BlockEditor
 
     public function getMenuTree()
     {
-        $menus = Menus::allMenus();
+        $menus = YiiCms::$app->menuService->allMenus();
 
         $result = [];
 

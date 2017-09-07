@@ -85,79 +85,14 @@ class Mails extends ActiveRecord
         ];
     }
 
-    /**
-     * производит отправку сообщения
-     * @param bool $resend переотправить письмо если уже было отправлено
-     * @return bool|-1 -1 если письмо уже было отправлено и resend = false
-     */
-    public function sendToReciver($resend = false)
-    {
-        if (!$resend && $this->sentAt !== null) {
-            return -1;
-        }
-
-        $result = \Yii::$app->mailer
-            ->compose()
-            ->setFrom([Settings::get('core.robotMail') => Settings::get('core.siteName')])
-            ->setTo([$this->email => $this->toLogin])
-            ->setSubject($this->subject)
-            ->setHtmlBody($this->messageText)
-            ->send();
-
-        if ($result) {
-            $this->sentAt = new DateTime();
-            $this->save();
-        }
-
-        return $result;
-    }
-
-    /**
-     * выполяет обработку шаблона для отправки получателю
-     * @param string $templateId Id шаблона письма
-     * @param Users $fromUser получатель
-     * @param Users $toUser отправитель
-     * @param array $params
-     * @return Mails|false false если отправка не удалась
-     */
-    public static function send($templateId, $fromUser, $toUser, array $params = [])
-    {
-        $template = MailsTemplates::findTemplate($templateId);
-        if ($template === null) {
-            return false;
-        }
-
-        if (!isset($params['siteName'])) {
-            $params['siteName'] = Settings::get('core.siteName');
-        }
-        if (!isset($params['siteUrl'])) {
-            $params['siteUrl'] = \Yii::$app->urlManager->createAbsoluteUrl(\Yii::$app->homeUrl);
-        }
-
-        $template->lang = $toUser->lang;
-        $template->params = $params;
-
-        $mail = new self;
-        $mail->fromUserId = $fromUser->userId;
-        $mail->email = $toUser->email;
-        $mail->toLogin = $toUser->login;
-
-        $mail->subject = $template->renderSubject();
-        $mail->messageText = $template->renderTemplate();
-        if (!$mail->save()) {
-            return false;
-        }
-        return $mail;
-    }
-
-    // -------------------------------------------------- связи ---------------------------------------------------------------
+    // -------------------------------------------------- связи -------------------------------------------------------
 
     public function getFromUser()
     {
         return $this->hasOne(Users::class, ['userId' => 'fromUserId']);
     }
 
-    // --------------------------------------------- геттеры и сеттеры ---------------------------------------------------------
+    // --------------------------------------------- геттеры и сеттеры ------------------------------------------------
 
     public function getFromLogin()
     {

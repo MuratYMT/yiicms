@@ -10,9 +10,9 @@ namespace yiicms\modules\admin\controllers;
 
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yiicms\components\core\Url;
+use yiicms\components\YiiCms;
 use yiicms\modules\admin\models\menus\MenuSearch;
 use yiicms\modules\admin\models\menus\MenusVisibleForPathInfoSearch;
 use yiicms\modules\admin\models\menus\MenusVisibleForRoleSearch;
@@ -81,8 +81,10 @@ class MenusController extends Controller
         $model->parentId = $parentId;
         $model->scenario = Menus::SC_EDIT;
 
+        $menuService = YiiCms::$app->menuService;
+
         /** @noinspection NotOptimalIfConditionsInspection */
-        if ($request->isPost && $model->load($request->post()) && $model->save()) {
+        if ($request->isPost && $model->load($request->post()) && $menuService->save($model)) {
             Alert::success(\Yii::t('yiicms', 'Пункт меню создан'));
             return Url::goReturn();
         }
@@ -98,8 +100,10 @@ class MenusController extends Controller
         $model = self::findMenu($menuId);
         $model->scenario = Menus::SC_EDIT;
 
+        $menuService = YiiCms::$app->menuService;
+
         /** @noinspection NotOptimalIfConditionsInspection */
-        if ($request->isPost && $model->load($request->post()) && $model->save()) {
+        if ($request->isPost && $model->load($request->post()) && $menuService->save($model)) {
             Alert::success(\Yii::t('yiicms', 'Пункт меню "{menu}" отредактирован', ['menu' => $model->title]));
             return Url::goReturn();
         }
@@ -112,13 +116,7 @@ class MenusController extends Controller
     {
         $menu = self::findMenu($menuId);
 
-        if ((int)$removeChild === 1) {
-            $res = $menu->deleteRecursive();
-        } else {
-            $res = $menu->delete();
-        }
-
-        if ($res) {
+        if (YiiCms::$app->menuService->delete($menu, (int)$removeChild === 1)) {
             Alert::success(\Yii::t('yiicms', 'Пункт меню "{menu}" удален', ['menu' => $menu->title]));
         } else {
             Alert::error(\Yii::t('yiicms', 'Ошибка удаления пункта меню'));
@@ -134,21 +132,26 @@ class MenusController extends Controller
         $dataProvider = $model->search($menu, \Yii::$app->request->queryParams);
 
         $this->view->title = \Yii::t('yiicms', 'Роли для которых виден пункт меню "{menu}"', ['menu' => $menu->title]);
-        return $this->render('role-permission', ['dataProvider' => $dataProvider, 'menuId' => $menu->menuId, 'model' => $model]);
+        return $this->render(
+            'role-permission',
+            ['dataProvider' => $dataProvider, 'menuId' => $menu->menuId, 'model' => $model]
+        );
     }
 
     public function actionRoleVisibleGrant($menuId, $roleName, $recursive = false)
     {
         $menu = self::findMenuAndCheckRole($menuId, $roleName);
-        $menu->grant($roleName, $recursive);
-        Alert::success(\Yii::t('yiicms', 'Видимость пункта меню для роли "{role}" предоставлена', ['role' => $roleName]));
+        YiiCms::$app->menuService->grant($menu, $roleName, $recursive);
+        Alert::success(
+            \Yii::t('yiicms', 'Видимость пункта меню для роли "{role}" предоставлена', ['role' => $roleName])
+        );
         return Url::goReturn();
     }
 
     public function actionRoleVisibleRevoke($menuId, $roleName, $recursive = false)
     {
         $menu = self::findMenuAndCheckRole($menuId, $roleName);
-        $menu->revoke($roleName, $recursive);
+        YiiCms::$app->menuService->revoke($menu, $roleName, $recursive);
 
         Alert::success(\Yii::t('yiicms', 'Видимость пункта меню для роли "{role}" отменена', ['role' => $roleName]));
         return Url::goReturn();
@@ -157,7 +160,7 @@ class MenusController extends Controller
     public function actionChildrenVisibleAsThis($menuId)
     {
         $model = self::findMenu($menuId);
-        if ($model->replaceChildrenVisibleForRole()) {
+        if (YiiCms::$app->menuService->replaceChildrenVisibleForRole($model)) {
             Alert::success(\Yii::t('yiicms', 'Видимость для ролей дочерних пунктов меню установлена'));
         } else {
             Alert::error(\Yii::t('yiicms', 'Ошибка изменения видимости для ролей'));
@@ -172,8 +175,15 @@ class MenusController extends Controller
         $model = new MenusVisibleForPathInfoSearch();
         $dataProvider = $model->search($menuId);
 
-        $this->view->title = \Yii::t('yiicms', 'Правила видимости пункта меню "{menu}" на страницах сайта', ['menu' => $menu->title]);
-        return $this->render('pathinfo-permission', ['dataProvider' => $dataProvider, 'menuId' => $menu->menuId, 'model' => $model]);
+        $this->view->title = \Yii::t(
+            'yiicms',
+            'Правила видимости пункта меню "{menu}" на страницах сайта',
+            ['menu' => $menu->title]
+        );
+        return $this->render(
+            'pathinfo-permission',
+            ['dataProvider' => $dataProvider, 'menuId' => $menu->menuId, 'model' => $model]
+        );
     }
 
     public function actionPathInfoVisibleAdd($menuId)
@@ -189,7 +199,11 @@ class MenusController extends Controller
             return Url::goReturn();
         }
 
-        $this->view->title = \Yii::t('yiicms', 'Добавить правило видимости пункта меню "{menu}" на страницах сайта', ['menu' => $menu->title]);
+        $this->view->title = \Yii::t(
+            'yiicms',
+            'Добавить правило видимости пункта меню "{menu}" на страницах сайта',
+            ['menu' => $menu->title]
+        );
         return $this->render('pathinfo-visible-edit', ['model' => $model]);
     }
 
@@ -208,7 +222,11 @@ class MenusController extends Controller
             return Url::goReturn();
         }
 
-        $this->view->title = \Yii::t('yiicms', 'Изменить правило видимости пункта меню "{menu}" на страницах сайта', ['menu' => $menu->title]);
+        $this->view->title = \Yii::t(
+            'yiicms',
+            'Изменить правило видимости пункта меню "{menu}" на страницах сайта',
+            ['menu' => $menu->title]
+        );
         return $this->render('pathinfo-visible-edit', ['model' => $model]);
     }
 
@@ -221,7 +239,11 @@ class MenusController extends Controller
         $menu = self::findMenu($model->menuId);
 
         if ($model->delete()) {
-            Alert::success(\Yii::t('yiicms', 'Правило видимости для пункта меню "{menu}" удалено', ['menu' => $menu->title]));
+            Alert::success(\Yii::t(
+                'yiicms',
+                'Правило видимости для пункта меню "{menu}" удалено',
+                ['menu' => $menu->title]
+            ));
         } else {
             Alert::error(\Yii::t('yiicms', 'Ошибка удаления правила'));
         }
@@ -236,7 +258,9 @@ class MenusController extends Controller
      */
     private static function findMenuAndCheckRole($menuId, $roleName)
     {
-        if ($roleName !== Settings::get('users.defaultGuestRole') && null === \Yii::$app->authManager->getRole($roleName)) {
+        if ($roleName !== Settings::get('users.defaultGuestRole')
+            && null === \Yii::$app->authManager->getRole($roleName)
+        ) {
             throw new NotFoundHttpException;
         }
 

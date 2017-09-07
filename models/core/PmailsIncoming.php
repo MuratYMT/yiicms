@@ -7,6 +7,7 @@ use yiicms\components\core\DateTime;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yiicms\components\YiiCms;
 
 /**
  * This is the model class for table "web.pmailsIncoming".
@@ -68,7 +69,10 @@ class PmailsIncoming extends ActiveRecord
     public function rules()
     {
         return [
-            [['rowId', 'talkId', 'toUserId', 'fromUserId', 'fromUserLogin', 'subject', 'msgText', 'folderId'], 'required'],
+            [
+                ['rowId', 'talkId', 'toUserId', 'fromUserId', 'fromUserLogin', 'subject', 'msgText', 'folderId'],
+                'required'
+            ],
             [['rowId', 'talkId', 'toUserId', 'fromUserId', 'readed', 'folderId'], 'integer'],
             [['msgText'], 'string'],
             [['msgText'], 'string', 'min' => 10, 'max' => 65000],
@@ -97,32 +101,6 @@ class PmailsIncoming extends ActiveRecord
         ];
     }
 
-    public function afterSave($insert, $changedAttributes)
-    {
-        parent::afterSave($insert, $changedAttributes);
-        if ($insert) {
-            PmailsUserStat::changePmNotReadCount($this->toUser, 1);
-            PmailsUserStat::changePmTotalCount($this->toUser, 1);
-        } else {
-            if (array_key_exists('readed', $changedAttributes)) {
-                if ((int)$this->readed === 1) {
-                    PmailsUserStat::changePmNotReadCount($this->toUser, -1);
-                } else {
-                    PmailsUserStat::changePmNotReadCount($this->toUser, 1);
-                }
-            }
-        }
-    }
-
-    public function afterDelete()
-    {
-        parent::afterDelete();
-        if (!$this->readed) {
-            PmailsUserStat::changePmNotReadCount($this->toUser, -1);
-        }
-        PmailsUserStat::changePmTotalCount($this->toUser, -1);
-    }
-
     /**
      * отмечает сообщение прочитанным
      * @return bool
@@ -132,7 +110,7 @@ class PmailsIncoming extends ActiveRecord
         $this->readed = 1;
         $scenario = $this->scenario;
         $this->scenario = self::SC_MARK_READ;
-        $result = $this->save();
+        $result = YiiCms::$app->pmailService->incomingPmailSave($this);
         $this->scenario = $scenario;
         return $result;
     }
@@ -146,7 +124,7 @@ class PmailsIncoming extends ActiveRecord
         $this->readed = 0;
         $scenario = $this->scenario;
         $this->scenario = self::SC_MARK_READ;
-        $result = $this->save();
+        $result = YiiCms::$app->pmailService->incomingPmailSave($this);
         $this->scenario = $scenario;
         return $result;
     }
@@ -171,7 +149,7 @@ class PmailsIncoming extends ActiveRecord
         return self::view($userId)->andWhere(['readed' => 0]);
     }
 
-    // ------------------------------------------------------- связи -----------------------------------------------------------
+    // ------------------------------------------------------- связи --------------------------------------------------
 
     /**
      * @return \yii\db\ActiveQuery

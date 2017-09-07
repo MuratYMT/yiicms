@@ -9,7 +9,13 @@
 namespace yiicms\components\core\yii;
 
 use yii\console\Application;
+use yiicms\components\core\db\Connection;
 
+/**
+ * Class ConsoleApplication
+ * @package yiicms\components\core\yii
+ * @property Connection $db
+ */
 class ConsoleApplication extends Application
 {
     use CommonApplicationTrait;

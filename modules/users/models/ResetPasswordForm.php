@@ -8,6 +8,7 @@
 
 namespace yiicms\modules\users\models;
 
+use yiicms\components\YiiCms;
 use yiicms\models\core\Mails;
 use yiicms\models\core\Users;
 use yii\base\Model;
@@ -32,7 +33,12 @@ class ResetPasswordForm extends Model
             [['email'], 'required'],
             [['email'], 'string', 'max' => 255],
             [['email'], 'string', 'min' => 3],
-            [['email'], 'exist', 'targetClass' => Users::class, 'message' => \Yii::t('modules/users', 'Неизвестный пользователь')]
+            [
+                ['email'],
+                'exist',
+                'targetClass' => Users::class,
+                'message' => \Yii::t('modules/users', 'Неизвестный пользователь')
+            ]
         ];
     }
 
@@ -54,6 +60,11 @@ class ResetPasswordForm extends Model
 
         $resetLink = \Yii::$app->urlManager->createAbsoluteUrl(['restore-password', 'token' => $user->token]);
 
-        return false !== Mails::send('passwordRestore', Users::findById(-1), $user, ['changeUrl' => $resetLink, 'user' => $user]);
+        return false !== YiiCms::$app->mailService->send(
+                'passwordRestore',
+                Users::findById(-1),
+                $user,
+                ['changeUrl' => $resetLink, 'user' => $user]
+            );
     }
 }

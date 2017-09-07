@@ -12,6 +12,7 @@ use yiicms\components\core\widgets\Alert;
 use yiicms\components\core\widgets\CancelButton;
 use yiicms\components\core\widgets\SubmitButton;
 use yii\web\View;
+use yiicms\components\YiiCms;
 use yiicms\models\core\Crontabs;
 
 /**
@@ -28,7 +29,8 @@ use yiicms\models\core\Crontabs;
         <?php $form = ActiveForm::begin(['layout' => 'horizontal', 'options' => ['data-pjax' => 1]]); ?>
         <div class="row">
             <div class="form-group col-md-12 col-sm-12">
-                <?= $form->field($model, 'jobClass')->dropDownList(Crontabs::getJobClassDropDown()); ?>
+                <?= $form->field($model, 'jobClass')
+                    ->dropDownList(YiiCms::$app->crontabService->getJobClassDropDown()); ?>
                 <?= $form->field($model, 'runTime')->textInput(); ?>
                 <em>&lt;Минуты&gt;&lt;Часы&gt;&lt;Дни_месяца&gt;&lt;Месяцы&gt;&lt;Дни_недели&gt;, <br/>
                     */4 каждые 4 минуты или каждые 4 часа,

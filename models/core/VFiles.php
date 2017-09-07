@@ -11,6 +11,7 @@ namespace yiicms\models\core;
 use yii\db\ActiveRecord;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
+use yiicms\components\YiiCms;
 
 /**
  * Class VFiles
@@ -48,11 +49,11 @@ class VFiles extends ActiveRecord
 
     public function afterDelete()
     {
-        $this->loadedFile->delete();
+        YiiCms::$app->loadedFileService->delete($this->loadedFile);
         parent::afterDelete();
     }
 
-    // ------------------------------------------------------ связи -------------------------------------------------------------------
+    // ------------------------------------------------------ связи ---------------------------------------------------
 
     public function getVFolder()
     {

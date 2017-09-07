@@ -13,7 +13,9 @@ use yii\web\BadRequestHttpException;
 use yiicms\components\core\Url;
 use yiicms\components\core\widgets\Alert;
 use yii\web\Controller;
+use yiicms\components\YiiCms;
 use yiicms\models\core\LoadedFiles;
+use yiicms\models\core\Users;
 use yiicms\models\core\VFiles;
 use yiicms\models\core\VFolders;
 use yiicms\modules\filemanager\models\FileManagerLoadForm;
@@ -127,11 +129,12 @@ class DefaultController extends Controller
         $loadForm = new FileManagerLoadForm(['folderId' => $this->folderId]);
 
         if (\Yii::$app->request->isPost) {
-            if ($loadForm->upload()) {
+            /** @var Users $user */
+            $user = YiiCms::$app->user->identity;
+            if ($loadForm->upload($user)) {
                 return json_encode([], JSON_FORCE_OBJECT);
-            } else {
-                return json_encode(['error' => implode('<hr>', $loadForm->errors['uFiles'])], JSON_FORCE_OBJECT);
             }
+            return json_encode(['error' => implode('<hr>', $loadForm->errors['uFiles'])], JSON_FORCE_OBJECT);
         }
         $this->view->title = \Yii::t('modules/filemanager', 'Загрузить файлы');
         return $this->render('load-form', ['currentFolder' => $this->folderId, 'loadModel' => $loadForm]);
@@ -157,11 +160,19 @@ class DefaultController extends Controller
             $model->load($request->post());
 
             if ($model->save()) {
-                Alert::success(\Yii::t('modules/filemanager', 'Каталог "{folder}" переименован', ['folder' => $model->title]));
+                Alert::success(\Yii::t(
+                    'modules/filemanager',
+                    'Каталог "{folder}" переименован',
+                    ['folder' => $model->title])
+                );
                 return Url::goReturn();
             }
         }
-        $this->view->title = \Yii::t('modules/filemanager', 'Переименовать каталог "{folder}"', ['folder' => $model->title]);
+        $this->view->title = \Yii::t(
+            'modules/filemanager',
+            'Переименовать каталог "{folder}"',
+            ['folder' => $model->title]
+        );
         return $this->render('rename-folder', ['model' => $model]);
     }
 
@@ -187,7 +198,11 @@ class DefaultController extends Controller
 
             /** @noinspection NotOptimalIfConditionsInspection */
             if ($model->load($request->post()) && $model->save()) {
-                Alert::success(\Yii::t('modules/filemanager', 'Каталог "{folder}" создан', ['folder' => $model->title]));
+                Alert::success(\Yii::t(
+                    'modules/filemanager',
+                    'Каталог "{folder}" создан',
+                    ['folder' => $model->title])
+                );
                 return Url::goReturn();
             }
         }
@@ -236,14 +251,20 @@ class DefaultController extends Controller
             //редактирование названия файла
             $loadedFile = $model->loadedFile;
             $loadedFile->scenario = LoadedFiles::SC_RENAME;
-
+            $loadedFileService = YiiCms::$app->loadedFileService;
             /** @noinspection NotOptimalIfConditionsInspection */
-            if ($loadedFile->load($request->post()) && $loadedFile->save()) {
-                Alert::success(\Yii::t('modules/filemanager', 'Файл "{file}" переименован', ['file' => $loadedFile->title]));
+            if ($loadedFile->load($request->post()) && $loadedFileService->save($loadedFile)) {
+                Alert::success(
+                    \Yii::t('modules/filemanager', 'Файл "{file}" переименован', ['file' => $loadedFile->title])
+                );
                 return Url::goReturn();
             }
         }
-        $this->view->title = \Yii::t('modules/filemanager', 'Переименовать файл "{file}"', ['file' => $model->loadedFile->title]);
+        $this->view->title = \Yii::t(
+            'modules/filemanager',
+            'Переименовать файл "{file}"',
+            ['file' => $model->loadedFile->title]
+        );
         return $this->render('rename-file', ['model' => $model]);
     }
 

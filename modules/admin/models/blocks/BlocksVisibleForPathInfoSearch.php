@@ -10,13 +10,14 @@ namespace yiicms\modules\admin\models\blocks;
 
 use yiicms\models\core\BlocksVisibleForPathInfo;
 use yii\data\ActiveDataProvider;
+use yiicms\models\core\constants\VisibleForPathInfoConst;
 
 class BlocksVisibleForPathInfoSearch extends BlocksVisibleForPathInfo
 {
     public function rules()
     {
         return [
-            [['rule'], 'in', 'range' => self::$rulesArray],
+            [['rule'], 'in', 'range' => VisibleForPathInfoConst::RULES_ARRAY],
             [['template'], 'string', 'max' => 255],
         ];
     }

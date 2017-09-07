@@ -13,6 +13,7 @@ use yii\web\BadRequestHttpException;
 use yiicms\components\core\Url;
 use yiicms\components\core\widgets\Alert;
 use yii\web\Controller;
+use yiicms\components\YiiCms;
 use yiicms\models\core\Crontabs;
 use yiicms\modules\admin\models\CrontabsSearch;
 use yii\filters\AccessControl;
@@ -110,7 +111,7 @@ class CrontabController extends Controller
     {
         $job = self::findJob($jobClass);
 
-        if (Crontabs::runJob($job)) {
+        if (YiiCms::$app->crontabService->runJob($job)) {
             Alert::success(\Yii::t('yiicms', 'Задание "{job}" было запущено', ['job' => $job->descript]));
         } else {
             Alert::error(\Yii::t('yiicms', 'Ошибка запуска задания'));

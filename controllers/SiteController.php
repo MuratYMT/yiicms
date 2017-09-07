@@ -14,6 +14,7 @@ use yii\web\ErrorAction;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
 use yii\web\Controller;
+use yiicms\components\YiiCms;
 use yiicms\models\content\Page;
 use yiicms\models\core\LoadedFiles;
 use yiicms\models\core\Settings;
@@ -61,10 +62,11 @@ class SiteController extends Controller
      */
     public function actionThumbnail($path, $fileName, $width, $height, $style)
     {
-        $thumbnailFile = LoadedFiles::publishThumbnail($path, $fileName, $width, $height, $style);
+        $thumbnailFile = YiiCms::$app->loadedFileService->publishThumbnail($path, $fileName, $width, $height, $style);
         if ($thumbnailFile === false) {
             throw new NotFoundHttpException;
-        } elseif ($thumbnailFile === -1) {
+        }
+        if ($thumbnailFile === -1) {
             throw new ServerErrorHttpException;
         }
         \Yii::$app->response->sendFile($thumbnailFile, null, ['inline' => true]);
@@ -79,10 +81,11 @@ class SiteController extends Controller
      */
     public function actionImage($path, $fileName)
     {
-        $imageFile = LoadedFiles::publishFile($path, $fileName);
+        $imageFile = YiiCms::$app->loadedFileService->publishFile($path, $fileName);
         if ($imageFile === false) {
             throw new NotFoundHttpException;
-        } elseif ($imageFile === -1) {
+        }
+        if ($imageFile === -1) {
             throw new ServerErrorHttpException;
         }
         \Yii::$app->response->sendFile($imageFile, null, ['inline' => true]);

@@ -10,8 +10,10 @@ namespace yiicms\components\core;
 
 use yii\base\Model;
 use yii\web\UploadedFile;
+use yiicms\components\YiiCms;
 use yiicms\models\core\LoadedFiles;
 use yiicms\models\core\Settings;
+use yiicms\models\core\Users;
 
 class FileLoadForm extends Model
 {
@@ -83,11 +85,11 @@ class FileLoadForm extends Model
     /**
      * Выполняет загрузку файлов. Копирует файл в папку загрузок и сохраняет запись в базу данных.
      * Файл имеет временный флаг
-     * @return LoadedFiles[]|false
+     * @param Users $user
+     * @return false|LoadedFiles[]
      * @throws \Exception
-     * @throws \yii\db\Exception
      */
-    public function upload()
+    public function upload(Users $user)
     {
         $this->uFiles = UploadedFile::getInstances($this, 'uFiles');
 
@@ -100,9 +102,10 @@ class FileLoadForm extends Model
         $trans = LoadedFiles::getDb()->beginTransaction();
         try {
             $result = [];
+            $loadedFileService = YiiCms::$app->loadedFileService;
             foreach ($this->uFiles as $file) {
                 $loadedFile = new LoadedFiles();
-                if (!$loadedFile->assign2($file) || !$loadedFile->save()) {
+                if (!$loadedFile->assign2($file, $user) || !$loadedFileService->save($loadedFile)) {
                     $this->addError('uFiles', \Yii::t('yiicms', 'Файлы не загружены'));
                     $trans->rollBack();
                     return false;

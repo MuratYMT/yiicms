@@ -17,6 +17,7 @@ use yii\web\Response;
 use yii\web\ServerErrorHttpException;
 use yiicms\components\core\Url;
 use yiicms\components\core\widgets\Alert;
+use yiicms\components\YiiCms;
 use yiicms\models\core\PmailsIncoming;
 use yiicms\models\core\PmailsOutgoing;
 use yiicms\modules\admin\models\users\UsersSearch;
@@ -112,7 +113,7 @@ class PmailsController extends Controller
             if ($request->post('action') === 'send') {
                 $model->sended = 1;
             }
-            if ($model->save()) {
+            if (YiiCms::$app->pmailService->outgoingPmailSave($model)) {
                 return $this->saveSend($model);
             }
         }
@@ -214,7 +215,7 @@ class PmailsController extends Controller
             if ($request->post('action') === 'send') {
                 $model->sended = 1;
             }
-            if ($model->save()) {
+            if (YiiCms::$app->pmailService->outgoingPmailSave($model)) {
                 return $this->saveSend($model);
             }
         }
@@ -237,7 +238,7 @@ class PmailsController extends Controller
             if ($request->post('action') === 'send') {
                 $model->sended = 1;
             }
-            if ($model->save()) {
+            if (YiiCms::$app->pmailService->outgoingPmailSave($model)) {
                 return $this->saveSend($model);
             }
         }

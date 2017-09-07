@@ -10,6 +10,7 @@ namespace yiicms\modules\users\models;
 
 use yii\web\UploadedFile;
 use yiicms\components\core\File;
+use yiicms\components\YiiCms;
 use yiicms\models\core\LoadedFiles;
 use yiicms\models\core\Settings;
 
@@ -51,7 +52,7 @@ class PhotoSetForm extends AbstractProfileForm
             if (null !== $photo = $userObj->photo) {
                 $userObj->photo = new File();
                 if (null !== $loadedFiles = LoadedFiles::findById($photo->id)) {
-                    $loadedFiles->delete();
+                    YiiCms::$app->loadedFileService->delete($loadedFiles);
                 }
                 $userObj->save();
             }
@@ -83,11 +84,11 @@ class PhotoSetForm extends AbstractProfileForm
         $userObj = $this->user;
         $trans = $userObj::getDb()->beginTransaction();
         try {
-            if ($fileLoader->assign2($this->file)) {
+            if ($fileLoader->assign2($this->file, $userObj)) {
                 $userObj->photo = $fileLoader->file;
                 if ($userObj->save()) {
                     $fileLoader->persistent = 1;
-                    if ($fileLoader->save()) {
+                    if (YiiCms::$app->loadedFileService->save($fileLoader)) {
                         $trans->commit();
                         return true;
                     }

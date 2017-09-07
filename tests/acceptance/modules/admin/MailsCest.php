@@ -9,6 +9,7 @@
 namespace tests\acceptance\modules\admin;
 
 use tests\acceptance\AcceptanceCest;
+use yiicms\components\YiiCms;
 use yiicms\models\core\Mails;
 use yiicms\models\core\Users;
 use yiicms\tests\_data\fixtures\models\core\MailsFixture;
@@ -27,7 +28,9 @@ class MailsCest extends AcceptanceCest
         $from = Users::findById(-1);
         $to = Users::findById(220);
 
-        $I->assertNotFalse(Mails::send('passwordRestore', $from, $to, ['changeUrl' => 'link', 'user' => $to]));
+        $I->assertNotFalse(
+            YiiCms::$app->mailService->send('passwordRestore', $from, $to, ['changeUrl' => 'link', 'user' => $to])
+        );
         self::login($I);
         $I->amOnPage('/admin/mails');
 

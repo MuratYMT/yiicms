@@ -9,10 +9,16 @@
 namespace yiicms\components\core\yii;
 
 use codemix\localeurls\UrlManager;
-use yiicms\models\core\LoadedFiles;
+use yiicms\components\core\db\Connection;
+use yiicms\models\core\constants\LoadedFileConst;
 use yii\web\Application;
 use yiicms\models\core\Settings;
 
+/**
+ * Class WebApplication
+ * @package yiicms\components\core\yii
+ * @property Connection $db
+ */
 class WebApplication extends Application
 {
     use CommonApplicationTrait;
@@ -46,7 +52,9 @@ class WebApplication extends Application
         $urlManager = $this->urlManager;
         //добавление обработки превьюх
         $urlManager->addRules([
-            $this->uploadFolder . '/<path:([\w|\-]/)+><fileName:[\w|\-|\.]+>_<width:\d+>' . LoadedFiles::SIZE_DELIMITER . '<height:\d+>_<style:\w+>.\w+' => 'site/thumbnail',
+            $this->uploadFolder
+                . '/<path:([\w|\-]/)+><fileName:[\w|\-|\.]+>_<width:\d+>'
+            . LoadedFileConst::SIZE_DELIMITER . '<height:\d+>_<style:\w+>.\w+' => 'site/thumbnail',
         ]);
         //обработка загруженных файлов
         $urlManager->addRules([

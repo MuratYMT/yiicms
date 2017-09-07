@@ -9,6 +9,7 @@
 namespace common\unit\test\models\web;
 
 use yiicms\components\core\DateTime;
+use yiicms\components\YiiCms;
 use yiicms\models\core\PmailsIncoming;
 use yiicms\models\core\PmailsOutgoing;
 use yiicms\models\core\PmailsUserStat;
@@ -147,6 +148,8 @@ class PmailsCest extends UnitCest
 
     public function testCountOnUser(\MyUnitTester $I)
     {
+        $pmailService = YiiCms::$app->pmailService;
+
         $fromUser = Users::findById(-1);
         $toUser = Users::findById(220);
 
@@ -174,13 +177,13 @@ class PmailsCest extends UnitCest
         $I->assertEquals(1, $toUser->notReadCount);
         $I->assertEquals(1, $toUser->totalCount);
 
-        $pmailIncoming->delete();
+        $pmailService->incomingPmailDelete($pmailIncoming);
 
         $toUser = PmailsUserStat::findOne(220);
         $I->assertEquals(0, $toUser->notReadCount);
         $I->assertEquals(0, $toUser->totalCount);
 
-        $pmail->delete();
+        $pmailService->outgoingPmailDelete($pmail);
 
         $fromUser = PmailsUserStat::findOne(-1);
         $I->assertEquals(0, $fromUser->notReadCount);

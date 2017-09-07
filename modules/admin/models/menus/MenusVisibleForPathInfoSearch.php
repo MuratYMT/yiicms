@@ -8,6 +8,7 @@
 
 namespace yiicms\modules\admin\models\menus;
 
+use yiicms\models\core\constants\VisibleForPathInfoConst;
 use yiicms\models\core\MenusVisibleForPathInfo;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -20,7 +21,7 @@ class MenusVisibleForPathInfoSearch extends Model
     public function rules()
     {
         return [
-            [['rule'], 'in', 'range' => MenusVisibleForPathInfo::$rulesArray],
+            [['rule'], 'in', 'range' => VisibleForPathInfoConst::RULES_ARRAY],
             [['template'], 'string', 'max' => 255],
         ];
     }

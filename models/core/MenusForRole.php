@@ -58,65 +58,7 @@ class MenusForRole extends ActiveRecord
         ];
     }
 
-    /**
-     * делает пункт меню видимым для роли
-     * @param Menus $menu ID пункта меню
-     * @param string $roleName для какой роли
-     * @return bool
-     */
-    public static function grant($menu, $roleName)
-    {
-        $mfr = self::findOne(['roleName' => $roleName, 'menuId' => $menu->menuId]);
-        if ($mfr !== null) {
-            return true;
-        }
-        $mfr = new self(['roleName' => $roleName, 'menuId' => $menu->menuId]);
-        return $mfr->save();
-    }
-
-    /**
-     * делает пункт меню невидимым для роли
-     * @param Menus $menu ID пункта меню
-     * @param string $roleName для какой роли
-     * @return bool
-     */
-    public static function revoke($menu, $roleName)
-    {
-        $mfr = self::findOne(['roleName' => $roleName, 'menuId' => $menu->menuId]);
-        if ($mfr === null) {
-            return true;
-        }
-
-        return false !== $mfr->delete();
-    }
-
-    /**
-     * устанавливает видимость пукта меню для ролей как у родительского
-     * @param Menus $menu
-     * @return bool
-     */
-    public static function asParent($menu)
-    {
-        $menuId = $menu->menuId;
-        if ($menu->parentId === 0) {
-            return true;
-        }
-        self::getDb()->createCommand()
-            ->delete(self::tableName(), ['menuId' => $menuId])
-            ->execute();
-
-        $mfrs = self::findAll(['menuId' => $menu->parentId]);
-        foreach ($mfrs as $mfr) {
-            $model = new self(['roleName' => $mfr->roleName, 'menuId' => $menuId]);
-            if (!$model->save()) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    // ------------------------------------------------------ связи --------------------------------------------------------------
+    // ------------------------------------------------------ связи ---------------------------------------------------
 
     /**
      * @return \yii\db\ActiveQuery
@@ -126,7 +68,7 @@ class MenusForRole extends ActiveRecord
         return $this->hasOne(Menus::class, ['menuId' => 'menuId']);
     }
 
-    // ---------------------------------------------- геттеры и сеттеры -------------------------------------------------------------
+    // ---------------------------------------------- геттеры и сеттеры -----------------------------------------------
 
     public function getRole()
     {

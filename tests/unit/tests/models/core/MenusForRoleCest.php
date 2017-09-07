@@ -8,6 +8,7 @@
 
 namespace common\unit\test\models\web;
 
+use yiicms\components\YiiCms;
 use yiicms\models\core\Menus;
 use yiicms\models\core\MenusForRole;
 use yiicms\tests\_data\fixtures\models\core\MenusFixture;
@@ -34,7 +35,7 @@ class MenusForRoleCest extends UnitCest
         $menu->parentId = $menuParent->menuId;
         $menu->title = 'menuChild';
 
-        $I->assertTrue($menu->save());
+        $I->assertTrue(YiiCms::$app->menuService->save($menu));
 
         $I->seeRecord(MenusForRole::className(), ['roleName' => 'role3', 'menuId' => $menu->menuId]);
         $I->seeRecord(MenusForRole::className(), ['roleName' => 'role1', 'menuId' => $menu->menuId]);

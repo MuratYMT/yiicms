@@ -9,6 +9,7 @@
 namespace yiicms\modules\admin\models\blocks;
 
 use yiicms\models\core\Blocks;
+use yiicms\models\core\constants\VisibleForPathInfoConst;
 use yiicms\models\core\VisibleForPathInfo;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -29,7 +30,7 @@ class BlocksSearch extends Model
             [['position'], 'string', 'max' => 255],
             [['weight', 'pathInfoVisibleOrder'], 'integer'],
             [['activy'], 'in', 'range' => [0, 1]],
-            [['pathInfoVisibleOrder'], 'in', 'range' => VisibleForPathInfo::$visibleArray],
+            [['pathInfoVisibleOrder'], 'in', 'range' => VisibleForPathInfoConst::VISIBLE_ARRAY],
         ];
     }
 

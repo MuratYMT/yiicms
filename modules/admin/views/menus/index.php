@@ -10,6 +10,7 @@ use kartik\grid\ActionColumn;
 use kartik\grid\FormulaColumn;
 use yii\widgets\Pjax;
 use yiicms\components\core\widgets\Alert;
+use yiicms\components\YiiCms;
 use yiicms\modules\admin\components\adminlte\GridView;
 use yii\helpers\Html;
 use yiicms\components\core\Url;
@@ -38,7 +39,8 @@ $gridConfig = [
                 foreach ($model->titleM as $lang => $title) {
                     $result[] = $lang . ' --> ' . $title;
                 }
-                return '<div style="margin-left: ' . (($model->levelNod - 1) * 30) . 'px">' . implode('<br>', $result) . '</div>';
+                return '<div style="margin-left: ' . (($model->levelNod - 1) * 30) . 'px">' . implode('<br>',
+                        $result) . '</div>';
             },
         ],
         [
@@ -70,12 +72,13 @@ $gridConfig = [
             'class' => FormulaColumn::class,
             'format' => 'raw',
             'value' => function ($model) {
-                return VisibleForPathInfo::visibleOrderLabels($model['pathInfoVisibleOrder']);
+                return YiiCms::$app->blockService->visibleOrderLabels($model['pathInfoVisibleOrder']);
             },
         ],
         [
             'class' => ActionColumn::class,
-            'template' => '<li>{add-child}</li><li>{edit}</li><li>{del}</li><li>{del-with-childs}</li><li><hr></li><li>{role-visible}</li><li>{role-visible-as-this}</li><li>{pathinfo-visible}</li>',
+            'template' => '<li>{add-child}</li><li>{edit}</li><li>{del}</li><li>{del-with-childs}</li><li>
+                <hr></li><li>{role-visible}</li><li>{role-visible-as-this}</li><li>{pathinfo-visible}</li>',
             'dropdownOptions' => ['class' => 'pull-right'],
             'dropdown' => true,
             'dropdownButton' => ['class' => 'btn btn-primary', 'label' => '<i class="fa fa-cogs"></i>'],
@@ -108,7 +111,11 @@ $gridConfig = [
                 'del-with-childs' => function ($url, $model) {
                     return Html::a(
                         '<i class="fa fa-trash"></i> ' . \Yii::t('yiicms', 'Удалить с дочерними'),
-                        Url::toWithNewReturn(['/admin/menus/del-menu', 'menuId' => $model['menuId'], 'removeChild' => 1]),
+                        Url::toWithNewReturn([
+                            '/admin/menus/del-menu',
+                            'menuId' => $model['menuId'],
+                            'removeChild' => 1
+                        ]),
                         [
                             'title' => \Yii::t('yiicms', 'Удалить этот пункт меню и все его дочерние пункты'),
                             'data-confirm' => \Yii::t('yiicms', 'Удалить этот пункт меню и все его дочерние пункты?'),
@@ -120,7 +127,10 @@ $gridConfig = [
                     return Html::a(
                         '<i class="fa fa-users"></i> ' . \Yii::t('yiicms', 'Видимость для ролей'),
                         Url::toWithNewReturn(['/admin/menus/role-visible', 'menuId' => $model['menuId']]),
-                        ['data-pjax' => 0, 'title' => \Yii::t('yiicms', 'Видимость пункта меню для ролей пользователей')]
+                        [
+                            'data-pjax' => 0,
+                            'title' => \Yii::t('yiicms', 'Видимость пункта меню для ролей пользователей')
+                        ]
                     );
                 },
                 'role-visible-as-this' => function ($url, $model) {
@@ -130,7 +140,10 @@ $gridConfig = [
                         [
                             'data-method' => 'post',
                             'data-confirm' => \Yii::t('yiicms', 'Заменить видимость у дочерних пунктов меню?'),
-                            'title' => \Yii::t('yiicms', 'Заменить видимость для ролей у дочерних пунктов меню как у этого пункта меню'),
+                            'title' => \Yii::t(
+                                'yiicms',
+                                'Заменить видимость для ролей у дочерних пунктов меню как у этого пункта меню'
+                            ),
                         ]
                     );
                 },
@@ -138,7 +151,10 @@ $gridConfig = [
                     return Html::a(
                         '<i class="fa fa-files-o"></i> ' . \Yii::t('yiicms', 'Видимость на страницах'),
                         Url::toWithNewReturn(['/admin/menus/path-info-visible', 'menuId' => $model['menuId']]),
-                        ['data-pjax' => 0, 'title' => \Yii::t('yiicms', 'Видимость пункта меню на различных страницах сайта')]
+                        [
+                            'data-pjax' => 0,
+                            'title' => \Yii::t('yiicms', 'Видимость пункта меню на различных страницах сайта')
+                        ]
                     );
                 },
             ],

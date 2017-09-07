@@ -23,6 +23,7 @@ use yiicms\components\core\validators\DateTimeValidator;
 use yiicms\components\core\validators\HtmlFilter;
 use yiicms\components\core\validators\LangValidator;
 use yiicms\components\core\validators\WebTextValidator;
+use yiicms\components\YiiCms;
 use yiicms\models\core\LoadedFiles;
 use yiicms\models\core\Users;
 
@@ -30,11 +31,12 @@ use yiicms\models\core\Users;
  * This is the model class for table "web.contentPages".
  * @property integer $pageId Page ID
  * @property DateTime $createdAt Время создания страницы. При чтении всегда выдает дату во внутреннем формате в UTC
- * При записи можно передать строку которая будет считаться что находится в часовом поясе указанном в \Yii::$app->formatter->timeZone
- * либо объект DateTime
- * @property integer $publishedAt Дата публикации (дата показываемая пользователям). При чтении всегда выдает дату во внутреннем формате в UTC
- * При записи можно передать строку которая будет считаться что находится в часовом поясе указанном в \Yii::$app->formatter->timeZone
- * либо объект DateTime
+ * При записи можно передать строку которая будет считаться что находится в часовом поясе указанном в
+ * \Yii::$app->formatter->timeZone либо объект DateTime
+ * @property integer $publishedAt Дата публикации (дата показываемая пользователям). При чтении всегда выдает
+ * дату во внутреннем формате в UTC
+ * При записи можно передать строку которая будет считаться что находится в часовом поясе указанном в
+ * \Yii::$app->formatter->timeZone либо объект DateTime
  * @property integer $ownerId Идентификатор создателя
  * @property string $ownerLogin Логин создателя
  * @property integer $toFirst Выводить ли на первую страницу. 1 - да, 0 - нет
@@ -48,19 +50,21 @@ use yiicms\models\core\Users;
  * @property string $pageText Текст страницы
  * @property integer $commentsGroup Группа коментариев
  * @property DateTime|string $lastEditedAt Время последнего редактирования. При чтении всегда выдает объект DateTime
- * При записи можно передать строку которая будет считаться что находится в часовом поясе указанном в \Yii::$app->formatter->timeZone
- * либо объект DateTime
+ * При записи можно передать строку которая будет считаться что находится в часовом поясе указанном в
+ * \Yii::$app->formatter->timeZone либо объект DateTime
  * @property integer $lastUserId Последний редактировавший пользователь
  * @property string $lastUserLogin Логин последнего редактировавшего пользователя
  * @property integer $viewCount Количество просмотров страницы
  * @property integer $published 1 - опубликовано, 0 - черновик
  * @property File[] $images Сопроводительные материалы (картинки, видео и т.п.)
- * @property DateTime|string $startPublicationDate время с которого страница доступна. При чтении всегда выдает объект DateTime
- * При записи можно передать строку которая будет считаться что находится в часовом поясе указанном в \Yii::$app->formatter->timeZone
- * либо объект DateTime
- * @property DateTime|string $endPublicationDate время до которого страница доступна. При чтении всегда выдает объект DateTime
- * При записи можно передать строку которая будет считаться что находится в часовом поясе указанном в \Yii::$app->formatter->timeZone
- * либо объект DateTime
+ * @property DateTime|string $startPublicationDate время с которого страница доступна.
+ * При чтении всегда выдает объект DateTime
+ * При записи можно передать строку которая будет считаться что находится в часовом поясе указанном в
+ * \Yii::$app->formatter->timeZone либо объект DateTime
+ * @property DateTime|string $endPublicationDate время до которого страница доступна. При чтении всегда выдает
+ * объект DateTime
+ * При записи можно передать строку которая будет считаться что находится в часовом поясе указанном в
+ * \Yii::$app->formatter->timeZone либо объект DateTime
  * @property int[] $categoriesIds Категории страницы
  * @property string $keywords значение тега meta name="keywords"
  * @property TagObj[] $tags теги страницы
@@ -322,7 +326,9 @@ class Page extends ActiveRecord
     {
         parent::afterSave($insert, $changedAttributes);
         //создаем ревизию
-        if ($insert || (array_key_exists('announce', $changedAttributes) || array_key_exists('pageText', $changedAttributes))) {
+        if ($insert
+            || (array_key_exists('announce', $changedAttributes) || array_key_exists('pageText', $changedAttributes))
+        ) {
             $this->createRevision($this->_owner);
         }
 
@@ -345,8 +351,9 @@ class Page extends ActiveRecord
     public function afterDelete()
     {
         parent::afterDelete();
+        $loadedFileService = YiiCms::$app->loadedFileService;
         foreach ($this->images as $image) {
-            $image->loadedFile->delete();
+            $loadedFileService->delete($image->loadedFile);
         }
         UserStat::changePage($this->owner, -1);
     }
@@ -485,7 +492,8 @@ class Page extends ActiveRecord
             ->joinWith('pageInCategories.categoryPermissions')
             ->where([
                 CategoryPermission::tableName() . '.[[permission]]' => $permission,
-                CategoryPermission::tableName() . '.[[roleName]]' => ArrayHelper::getColumn(RbacHelper::rolesRecursiveForUser(), 'name'),
+                CategoryPermission::tableName() . '.[[roleName]]' =>
+                    ArrayHelper::getColumn(RbacHelper::rolesRecursiveForUser(), 'name'),
             ]);
 
         if ($root === null) {
@@ -613,19 +621,19 @@ class Page extends ActiveRecord
          * @var int[] $removed
          */
         list($added, $removed) = ArrayHelper::diffValues(array_keys($newImages), array_keys($oldImages));
-
+        $loadedFileService = YiiCms::$app->loadedFileService;
         foreach ($removed as $id) {
-            $oldImages[$id]->loadedFile->delete();
+            $loadedFileService->delete($oldImages[$id]->loadedFile);
         }
 
         foreach ($added as $id) {
             $loadedFile = $newImages[$id]->loadedFile;
             $loadedFile->persistent = 1;
-            $loadedFile->save();
+            $loadedFileService->save($loadedFile);
         }
     }
 
-    // -------------------------------------------------------- связи ---------------------------------------------------------
+    // -------------------------------------------------------- связи -------------------------------------------------
 
     /**
      * @return ActiveQuery
@@ -677,19 +685,19 @@ class Page extends ActiveRecord
         return $this->hasOne(Users::class, ['userId' => 'ownerId']);
     }
 
-    // ------------------------------------------------- геттеры и сеттеры -----------------------------------------------
+    // ------------------------------------------------- геттеры и сеттеры --------------------------------------------
 
-    private $_commentsCount;
+    private $commentsCountCache;
 
     public function getCommentsCount()
     {
-        if ($this->_commentsCount === null) {
-            $this->_commentsCount = (new Query())
+        if ($this->commentsCountCache === null) {
+            $this->commentsCountCache = (new Query())
                 ->from(Comment::tableName())
                 ->where(['commentGroup' => $this->commentsGroup])
                 ->count();
         }
-        return $this->_commentsCount;
+        return $this->commentsCountCache;
     }
 
     /**
@@ -771,7 +779,11 @@ class Page extends ActiveRecord
             ->where(['commentGroup' => $this->commentsGroup]);
 
         //строим дерево
-        $rows = TreeHelper::build($query->asArray()->all(), 'commentId', ['createdAt' => [SORT_ASC, false], 'commentId' => [SORT_ASC, true]]);
+        $rows = TreeHelper::build(
+            $query->asArray()->all(),
+            'commentId',
+            ['createdAt' => [SORT_ASC, false], 'commentId' => [SORT_ASC, true]]
+        );
         return Helper::populateArray(Comment::class, $rows, 'commentId');
     }
 }

@@ -7,19 +7,23 @@
  * @license http://www.yiiframework.com/license/
  */
 
-use yii\helpers\ArrayHelper;
-
 defined('YII_DEBUG') or define('YII_DEBUG', true);
 defined('YII_ENV') or define('YII_ENV', 'dev');
+
+// fcgi doesn't have STDIN and STDOUT defined by default
+defined('STDIN') or define('STDIN', fopen('php://stdin', 'r'));
+defined('STDOUT') or define('STDOUT', fopen('php://stdout', 'w'));
 
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/vendor/yiisoft/yii2/Yii.php';
 require __DIR__ . '/config/bootstrap.php';
 
-$config = ArrayHelper::merge(
-    require __DIR__ . '/config/common.php',
-    require __DIR__ . '/config/console.php'
-);
+$config = require __DIR__ . '/config/common.php';
+
+$config = yii\helpers\ArrayHelper::merge($config, require __DIR__ . '/config/console.php');
+
+$config = \yii\helpers\ArrayHelper::merge($config, require __DIR__ . '/config/local/local.php');
+
 
 $application = new \yiicms\components\core\yii\ConsoleApplication($config);
 $exitCode = $application->run();

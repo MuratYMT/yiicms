@@ -12,8 +12,9 @@ use codemix\localeurls\UrlManager;
 use yii\web\NotFoundHttpException;
 use yii\widgets\ActiveForm;
 use yiicms\components\core\Helper;
+use yiicms\components\YiiCms;
 use yiicms\models\core\Blocks;
-use yiicms\models\core\BlocksVisibleForPathInfo;
+use yiicms\services\BlockService;
 
 class BlockEditor extends Blocks
 {
@@ -45,7 +46,8 @@ class BlockEditor extends Blocks
      */
     public function renderField($form)
     {
-        $position = Blocks::availablePosition();
+        /** @var BlockService $blockService */
+        $position = YiiCms::$app->blockService->availablePosition();
         $position = array_combine($position, $position);
 
         $templates = self::availableTemplates($this->contentClass);
@@ -57,7 +59,8 @@ class BlockEditor extends Blocks
         echo $form->field($this, 'viewFile')->dropDownList($templates);
         echo $form->field($this, 'weight')->textInput();
         echo $form->field($this, 'activy')->checkbox();
-        echo $form->field($this, 'pathInfoVisibleOrder')->dropDownList(BlocksVisibleForPathInfo::visibleOrderLabels());
+        echo $form->field($this, 'pathInfoVisibleOrder')
+            ->dropDownList(YiiCms::$app->blockService->visibleOrderLabels());
 
         $this->renderSpecificField($form);
     }

@@ -10,21 +10,21 @@ namespace yiicms\components\core\db;
 
 class Transaction extends \yii\db\Transaction
 {
-    private $_level2 = 0;
+    private $transactionLevel = 0;
 
     /**
      * @inheritdoc
      */
     public function begin($isolationLevel = null)
     {
-        if ($this->_level2 === 0) {
+        if ($this->transactionLevel === 0) {
             parent::begin($isolationLevel);
-            $this->_level2 = 1;
+            $this->transactionLevel = 1;
             return;
         }
 
-        \Yii::trace('Hierarhy transaction enter. Level ' . $this->_level2, __METHOD__);
-        $this->_level2++;
+        \Yii::trace('Hierarhy transaction enter. Level ' . $this->transactionLevel, __METHOD__);
+        $this->transactionLevel++;
     }
 
     /**
@@ -32,13 +32,13 @@ class Transaction extends \yii\db\Transaction
      */
     public function commit()
     {
-        $this->_level2--;
-        if ($this->_level2 === 0) {
+        $this->transactionLevel--;
+        if ($this->transactionLevel === 0) {
             parent::commit();
             return;
         }
 
-        \Yii::trace('Release hierarhy transaction. Level ' . $this->_level2, __METHOD__);
+        \Yii::trace('Release hierarhy transaction. Level ' . $this->transactionLevel, __METHOD__);
     }
 
     /**
@@ -46,7 +46,7 @@ class Transaction extends \yii\db\Transaction
      */
     public function rollBack()
     {
-        $this->_level2 = 0;
+        $this->transactionLevel = 0;
         parent::rollBack();
     }
 }

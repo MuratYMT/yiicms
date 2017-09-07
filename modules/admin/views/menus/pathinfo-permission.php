@@ -15,6 +15,7 @@ use yiicms\components\core\Url;
 use yiicms\components\core\widgets\Alert;
 use yiicms\components\core\widgets\CloseButton;
 use yii\web\View;
+use yiicms\components\YiiCms;
 use yiicms\models\core\MenusVisibleForPathInfo;
 use yiicms\modules\admin\components\adminlte\GridView;
 use yiicms\modules\admin\models\menus\MenusVisibleForPathInfoSearch;
@@ -40,7 +41,7 @@ $gridConfig = [
             'attribute' => 'rule',
             'value' => function ($model) {
                 /**@var $modelMenusVisibleForPathInfo */
-                return MenusVisibleForPathInfo::ruleLabels($model->rule);
+                return YiiCms::$app->blockService->ruleLabels($model->rule);
             },
         ],
         'template',

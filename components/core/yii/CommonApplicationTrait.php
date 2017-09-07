@@ -8,16 +8,27 @@
 
 namespace yiicms\components\core\yii;
 
+use yiicms\components\core\db\Connection;
+use yiicms\services\BlockService;
+use yiicms\services\CrontabService;
+use yiicms\services\LoadedFileService;
+use yiicms\services\MailService;
+use yiicms\services\MenuService;
+use yiicms\services\PmailService;
+
 /**
  * Class CommonApplicationTrait
  * @package yiicms\components\core\yii
+ * @property BlockService $blockService
+ * @property MenuService $menuService
+ * @property CrontabService $crontabService
+ * @property LoadedFileService $loadedFileService
+ * @property MailService $mailService
+ * @property PmailService $pmailService
  */
 trait CommonApplicationTrait
 {
-    /**
-     * @var string
-     * имя папки куда загружаются файлы пользователей
-     */
+    /** @var string имя папки куда загружаются файлы пользователей */
     public $uploadFolder = 'upload';
 
     /** @var string|string[] Где хранятся настройки сайта доступные к изменению через web интерфейс */

@@ -18,6 +18,7 @@ class Connection extends \yii\db\Connection
     /**
      * @inheritdoc
      * @throws \yii\db\Exception
+     * @return Transaction
      */
     public function beginTransaction($isolationLevel = null)
     {

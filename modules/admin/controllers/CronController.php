@@ -8,6 +8,7 @@
 
 namespace yiicms\modules\admin\controllers;
 
+use yiicms\components\YiiCms;
 use yiicms\models\core\Crontabs;
 use yii\console\Controller;
 
@@ -15,6 +16,6 @@ class CronController extends Controller
 {
     public function actionIndex()
     {
-        Crontabs::startAll();
+        YiiCms::$app->crontabService->startAll();
     }
 }

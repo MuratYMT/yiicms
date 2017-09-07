@@ -12,6 +12,7 @@ use Imagine\Image\ManipulatorInterface;
 use yii\base\Object;
 use yii\web\View;
 use yiicms\components\core\yii\Theme;
+use yiicms\components\YiiCms;
 use yiicms\models\core\LoadedFiles;
 use yiicms\models\core\Settings;
 
@@ -53,7 +54,7 @@ class File extends Object
      */
     public function asThumbnail($view, $width, $height, $style = ManipulatorInterface::THUMBNAIL_INSET)
     {
-        return LoadedFiles::thumbnailLink($view, $this->path, $width, $height, $style);
+        return YiiCms::$app->loadedFileService->thumbnailLink($view, $this->path, $width, $height, $style);
     }
 
     /**

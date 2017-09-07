@@ -8,6 +8,7 @@
 
 namespace yiicms\components\core\blocks;
 
+use yiicms\components\YiiCms;
 use yiicms\models\core\Blocks;
 use yii\base\InvalidConfigException;
 use yii\base\Widget;
@@ -42,7 +43,7 @@ class BlocksContainer extends Widget
     public function run()
     {
         $out = [];
-        foreach (Blocks::forPosition($this->position, \Yii::$app->user->id) as $block) {
+        foreach (YiiCms::$app->blockService->forPosition($this->position, \Yii::$app->user->id) as $block) {
             /** @var BlockWidget $class */
             $class = $block->contentClass;
             $params = $block->params;

@@ -11,6 +11,7 @@ use yii\widgets\Pjax;
 use yiicms\components\core\widgets\Alert;
 use yiicms\components\core\widgets\CancelButton;
 use yiicms\components\core\widgets\SubmitButton;
+use yiicms\components\YiiCms;
 use yiicms\models\core\MenusVisibleForPathInfo;
 
 /**
@@ -29,7 +30,7 @@ use yiicms\models\core\MenusVisibleForPathInfo;
         <?php $form = ActiveForm::begin(['layout' => 'horizontal']); ?>
         <div class="row">
             <div class="form-group col-md-12 col-sm-12">
-                <?= $form->field($model, 'rule')->dropDownList(MenusVisibleForPathInfo::ruleLabels()); ?>
+                <?= $form->field($model, 'rule')->dropDownList(YiiCms::$app->blockService->ruleLabels()); ?>
                 <?= $form->field($model, 'template')->textInput(); ?>
             </div>
         </div>

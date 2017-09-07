@@ -9,6 +9,7 @@
 namespace common\unit\test\models\web;
 
 use yiicms\components\core\DateTime;
+use yiicms\components\YiiCms;
 use yiicms\models\core\Mails;
 use yiicms\models\core\Users;
 use yiicms\tests\_data\fixtures\models\core\MailsFixture;
@@ -110,11 +111,12 @@ class MailsCest extends UnitCest
     {
         $fromUser = Users::findById(-1);
         $toUser = Users::findById(220);
-        $result = Mails::send('passwordRestore3', $fromUser, $toUser, ['user' => $toUser]);
+        $mailService = YiiCms::$app->mailService;
+        $result = $mailService->send('passwordRestore3', $fromUser, $toUser, ['user' => $toUser]);
 
         $I->assertFalse($result);
 
-        $result = Mails::send('passwordRestore', $fromUser, $toUser, ['user' => $toUser]);
+        $result = $mailService->send('passwordRestore', $fromUser, $toUser, ['user' => $toUser]);
 
         $I->assertNotFalse($result);
 
@@ -139,7 +141,7 @@ class MailsCest extends UnitCest
         $fromUser = Users::findById(-1);
         $toUser = Users::findById(220);
 
-        $mails = Mails::send('passwordRestore', $fromUser, $toUser, ['user' => $toUser]);
+        $mails = YiiCms::$app->mailService->send('passwordRestore', $fromUser, $toUser, ['user' => $toUser]);
 
         $mailsFromUser = $mails->fromUser;
 

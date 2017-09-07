@@ -10,7 +10,7 @@ namespace yiicms\components\admin;
 
 use yii\bootstrap\Html;
 use yii\bootstrap\InputWidget;
-use yiicms\models\core\Menus;
+use yiicms\components\YiiCms;
 
 class ParentMenuDropDown extends InputWidget
 {
@@ -26,7 +26,7 @@ class ParentMenuDropDown extends InputWidget
     {
         $result[''] = \Yii::t('modules/admin', 'БЕЗ РОДИТЕЛЬСКОГО');
 
-        foreach (Menus::allMenus() as $menu) {
+        foreach (YiiCms::$app->menuService->allMenus() as $menu) {
             $levelNod = (int)$menu->levelNod;
             if ((int)$levelNod === 1) {
                 $result[$menu->menuId] = '&lt; ' . $menu->title . ' &gt;';
@@ -37,7 +37,7 @@ class ParentMenuDropDown extends InputWidget
 
         $options = $this->options;
 
-        if (!isset($options['class'])){
+        if (!isset($options['class'])) {
             $options['class'] = 'form-control';
         }
 

@@ -13,8 +13,8 @@ use yiicms\components\core\widgets\Alert;
 use yiicms\components\core\widgets\CancelButton;
 use yiicms\components\core\widgets\FontawesomeIconPicker;
 use yiicms\components\core\widgets\SubmitButton;
+use yiicms\components\YiiCms;
 use yiicms\models\core\Menus;
-use yiicms\models\core\MenusVisibleForPathInfo;
 
 /**
  * @var $this \yii\web\View
@@ -36,12 +36,15 @@ use yiicms\models\core\MenusVisibleForPathInfo;
                 <?= $model->renderMultilang($form, 'title'); ?>
                 <?= $model->renderMultilang($form, 'subTitle'); ?>
 
-                <?= $form->field($model, 'icon',
-                    ['template' => "{label}\n<div class=\"input-group col-sm-6\" style=\"padding-left: 15px;padding-right: 15px;\">\n{input}<span class=\"input-group-addon\"></span>\n</div>\n{hint}\n{error}"])
-                    ->widget(FontawesomeIconPicker::class); ?>
+                <?= $form->field(
+                    $model,
+                    'icon',
+                    ['template' => "{label}\n<div class=\"input-group col-sm-6\" style=\"padding-left: 15px;padding-right: 15px;\">\n{input}<span class=\"input-group-addon\"></span>\n</div>\n{hint}\n{error}"]
+                )->widget(FontawesomeIconPicker::class); ?>
                 <?= $form->field($model, 'link')->textInput(); ?>
                 <?= $form->field($model, 'weight')->textInput(); ?>
-                <?= $form->field($model, 'pathInfoVisibleOrder')->dropDownList(MenusVisibleForPathInfo::visibleOrderLabels()); ?>
+                <?= $form->field($model, 'pathInfoVisibleOrder')
+                    ->dropDownList(YiiCms::$app->blockService->visibleOrderLabels()); ?>
             </div>
         </div>
         <div class="row button-row">

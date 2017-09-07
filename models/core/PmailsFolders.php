@@ -73,25 +73,7 @@ class PmailsFolders extends ActiveRecord
         ];
     }
 
-    /**
-     * создает системные папки для пользователя
-     * @param Users $user
-     * @return bool
-     */
-    public static function createDefaultsForUsers($user)
-    {
-        $userId = $user->userId;
-        $folderIncoming = new PmailsFolders(['userId' => $userId, 'folderType' => self::TYPE_INCOMING, 'title' => 'Incoming']);
-        $folderIncoming->scenario = self::SC_EDIT;
-        $folderOutgoing = new PmailsFolders(['userId' => $userId, 'folderType' => self::TYPE_OUTGOING, 'title' => 'Outgoing']);
-        $folderOutgoing->scenario = self::SC_EDIT;
-        /*$folderDraft = new PmailsFolders(['userId' => $userId, 'folderType' => self::TYPE_DRAFT, 'title' => 'Draft']);
-        $folderDraft->scenario = self::SC_EDIT;*/
-        return /*$folderDraft->save() &&*/
-            $folderOutgoing->save() && $folderIncoming->save();
-    }
-
-    // ---------------------------------------------------- связи ----------------------------------------------------------------
+    // ---------------------------------------------------- связи -----------------------------------------------------
 
     public function getUser()
     {

@@ -76,7 +76,7 @@ trait TreeTrait
         }
     }
 
-    // -------------------------------------------------- связи -----------------------------------------------------------
+    // -------------------------------------------------- связи -------------------------------------------------------
     public function getParent()
     {
         $primaryKey = $this->primaryKey();
@@ -86,7 +86,8 @@ trait TreeTrait
     public function getChildren()
     {
         $primaryKey = $this->primaryKey();
-        return $this->hasMany(self::class, ['parentId' => reset($primaryKey)])->from(static::tableName() . ' as parent');
+        return $this->hasMany(self::class, ['parentId' => reset($primaryKey)])
+            ->from(static::tableName() . ' as parent');
     }
 
     /**
@@ -116,7 +117,7 @@ trait TreeTrait
         return $query;
     }
 
-    // ----------------------------------------------- геттеры и сеттеры --------------------------------------------------
+    // ----------------------------------------------- геттеры и сеттеры ----------------------------------------------
 
     public function getPrimaryKeyValue()
     {
